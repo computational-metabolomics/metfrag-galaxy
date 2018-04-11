@@ -1,8 +1,5 @@
 <tool id="create_msp" name="Create MSP Files from msPurity" version="0.1.0">
     <description> </description>
-    <macros>
-        <import>macros.xml</import>
-    </macros>
     <requirements>
         <requirement type="package" version="1.4.4">r-optparse</requirement>
         <requirement type="package" version="1.4.0">bioconductor-mspurity</requirement>			
@@ -68,7 +65,12 @@ Result object from msPurity purityA-frag4feature functions.
 Set the value only if you selected "Weighted Average" above, the PPM value is used to define the limits for m/z grouping into a single fragment. 
 The weighting is based on the precursor intensity, meaning that the more intense the precursor signal was, the more intensity will its fragments contribute to the averaged spectra.
 
-@github_developers_contributors@ 
+		
+Developers and contributors
+---------------------------
+
+- **Jordi Capellades (j.capellades.to@gmail.com) - Universitat Rovira i Virgili (SP)**
+- **Ralf Weber (r.j.weber@bham.ac.uk) - University of Birmingham (UK)**
 
 	</help>
         <citations>
