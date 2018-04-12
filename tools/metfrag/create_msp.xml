@@ -4,7 +4,8 @@
         <requirement type="package" version="1.4.4">r-optparse</requirement>
         <requirement type="package" version="1.5.4">bioconductor-mspurity</requirement>			
     </requirements>
-    <command interpreter="Rscript"><![CDATA[
+    
+    <command interpreter="Rscript" ><![CDATA[
 	create_msp.R
 	--purity "$purity"
 	--mode "$mode"
@@ -30,14 +31,14 @@
             <output name="msp_out" file="input.msp"/>
         </test>
     </tests>
-	<help>
+	<help><![CDATA[
 ------------------------------
 Create MSP Files from msPurity
 ------------------------------
 
-* TODO: Add citation for MSP
-* TODO: Add PRECURSORTYPE if adducts available
-* TODO: Create MSP from xcms/mzml files
+* TO-DO: Add citation for MSP
+* TO-DO: Add PRECURSORTYPE if adducts available
+* TO-DO: Create MSP from xcms/mzml files
 
 Description
 -----------
@@ -73,7 +74,7 @@ Developers and contributors
 - **Jordi Capellades (j.capellades.to@gmail.com) - Universitat Rovira i Virgili (SP)**
 - **Ralf Weber (r.j.weber@bham.ac.uk) - University of Birmingham (UK)**
 
-	</help>
+	]]></help>
         <citations>
             <citation type="doi">10.1186/s13321-016-0115-9</citation>
         </citations>

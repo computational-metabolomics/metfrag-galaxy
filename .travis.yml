@@ -8,4 +8,4 @@ before_install:
  - pip install planemo
 
 script:
-- planemo lint ${TRAVIS_BUILD_DIR}/tools && planemo test --conda_auto_init --conda_auto_install --conda_ensure_channels tomnl,iuc,bioconda,conda-forge,defaults --conda_dependency_resolution --galaxy_branch release_17.09 --no_cache_galaxy ${TRAVIS_BUILD_DIR}/tools
+- planemo lint ${TRAVIS_BUILD_DIR}/tools/metfrag/. && planemo test --conda_auto_init --conda_auto_install --conda_ensure_channels tomnl,iuc,bioconda,conda-forge,defaults --conda_dependency_resolution --galaxy_branch release_17.09 --no_cache_galaxy ${TRAVIS_BUILD_DIR}/tools/metfrag/
