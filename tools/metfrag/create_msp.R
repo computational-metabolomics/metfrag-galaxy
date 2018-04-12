@@ -3,8 +3,8 @@ suppressWarnings(suppressPackageStartupMessages(require(msPurity)))
 
 # Get the parameter
 option_list <- list(
-  make_option(c("-i","--purity"),type="character")
-  make_option(c("-p","--ppm"),type="numeric")
+  make_option(c("-i","--purity"),type="character"),
+  make_option(c("-p","--ppm"),type="numeric"),
   make_option(c("-m","--mode"),type="character")
 )
 opt <- parse_args(OptionParser(option_list=option_list))
@@ -18,10 +18,19 @@ grped_df <- pa@grped_df
 msms <- pa@grped_ms2
 
 puritydf <- pa@puritydf
+print('filelist')
+print(pa@fileList)
+print('grped_df')
+print(unique(grped_df$filename))
+print('puritydf')
+print(unique(puritydf$filename))
 
-grped_df$fileid <- sapply(grped_df$filename, function(x) which(pa@fileList==x))
 
-puritydf$fileid <- sapply(puritydf$filename, function(x) which(pa@fileList==x))
+
+
+grped_df$fileid <- sapply(grped_df$filename, function(x) which(basename(pa@fileList)==x))
+
+puritydf$fileid <- sapply(puritydf$filename, function(x) which(basename(pa@fileList)==x))
 
 selfrag <- as.numeric(unique(grped_df$grpid)) 
 
@@ -64,7 +73,9 @@ for(i in selfrag){
 
                 grpdj <- grpd[jj,]
 
-                write.msp(idj,grpdj$precurMtchMZ,"",specj,of)
+                name = paste(i, grpdj$sample, grpdj$pid, sep='-')
+
+                write.msp(name,grpdj$precurMtchMZ,"",specj,of)
             }
 
         }else{
@@ -160,8 +171,8 @@ for(i in selfrag){
                     }
                         return(c(mz,nint))
                     }))
-                
-                    write.msp(i,mean(grpd$precurMtchMZ),"",averaged_spec,of)
+                    name = paste(i, grpd$sample, grpd$pid, sep='-')
+                    write.msp(name,mean(grpd$precurMtchMZ),"",averaged_spec,of)
 
             }
         }
@@ -169,8 +180,8 @@ for(i in selfrag){
         spec <- spec[[1]]
 
         grpd <- grped_df[j,]
-
-        write.msp(i,grpd$precurMtchMZ,"",spec,of)
+        name = paste(i, grpd$sample, grpd$pid, sep='-')
+        write.msp(name,grpd$precurMtchMZ,"",spec,of)
     }
 }
 

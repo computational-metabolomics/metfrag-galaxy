@@ -81,18 +81,15 @@ with open(args.results, 'a') as outfile:
         fileid = os.path.basename(fname)
         fileid = fileid.split("_")[0]
         with open("./tmet/"+fname) as infile:
-            reader = csv.reader(infile, delimiter=',', quotechar='"')
+            reader = csv.DictReader(infile, delimiter=',', quotechar='"')
             for line in reader:
-                line = "\t".join(line)
-                if "Score" in line:
-                    if first_write:
-                        newline = "UID\t"+line+"\n"
-                        outfile.write(newline)
-                        first_write = False
-                        outfile.flush()
-                else:
-                    newline = fileid+"\t"+line+"\n"
-                    outfile.write(newline)
-                    outfile.flush()
+                if first_write:
+                    headers = ['UID']
+                    headers.extend(line.keys())
+                    dwriter = csv.DictWriter(outfile, fieldnames=headers, delimiter='\t')
+                    dwriter.writerow(dict((fn,fn) for fn in headers))
+                    first_write = False 
+                line['UID'] = fileid
+                dwriter.writerow(line)
 
 

@@ -1,8 +1,8 @@
-<tool id="create_msp" name="Create MSP Files from msPurity" version="0.1.0">
+<tool id="create_msp" name="Create MSP Files from msPurity" version="0.1.1">
     <description> </description>
     <requirements>
         <requirement type="package" version="1.4.4">r-optparse</requirement>
-        <requirement type="package" version="1.4.0">bioconductor-mspurity</requirement>			
+        <requirement type="package" version="1.5.4">bioconductor-mspurity</requirement>			
     </requirements>
     <command interpreter="Rscript"><![CDATA[
 	create_msp.R
@@ -25,6 +25,7 @@
     </outputs>
     <tests>
         <test>
+            <param name="mode" value="all"/>
             <param name="purity" value="lightpurity.RData"/>
             <output name="msp_out" file="input.msp"/>
         </test>

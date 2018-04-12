@@ -1,4 +1,4 @@
-<tool id="metfrag" name="MetFrag" version="0.1.0">
+<tool id="metfrag" name="MetFrag" version="0.1.1">
     <description> </description>
     <requirements>
         <requirement type="package" version="2.4.2">metfrag</requirement>
