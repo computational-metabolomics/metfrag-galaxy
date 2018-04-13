@@ -38,6 +38,7 @@
     <tests>
         <test>
             <param name="input" value="input.msp"/>
+            <param name="db_local" value="demo_db.csv"/>
             <output name="results" file="metfrag.tabular"/>
         </test>
     </tests>
