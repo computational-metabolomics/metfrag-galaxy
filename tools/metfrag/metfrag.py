@@ -76,7 +76,8 @@ with open(args.input,"r") as infile:
 
 
 #outputs might have different headers. Need to get a list of all the headers before we start merging the files
-outfiles = os.listdir("./tmet")
+outfiles = sorted(os.listdir("./tmet"))
+
 headers = []
 for fname in outfiles:
     with open("./tmet/"+fname) as infile:
