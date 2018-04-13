@@ -1,6 +1,6 @@
 suppressWarnings(suppressPackageStartupMessages(require(optparse,quietly = T)))
 suppressWarnings(suppressPackageStartupMessages(require(msPurity)))
-
+print(sessionInfo())
 # Get the parameter
 option_list <- list(
   make_option(c("-i","--purity"),type="character"),
@@ -18,12 +18,7 @@ grped_df <- pa@grped_df
 msms <- pa@grped_ms2
 
 puritydf <- pa@puritydf
-print('filelist')
-print(pa@fileList)
-print('grped_df')
-print(unique(grped_df$filename))
-print('puritydf')
-print(unique(puritydf$filename))
+
 
 
 
@@ -87,8 +82,8 @@ for(i in selfrag){
                 idx <- which(prec_int==max(prec_int))
 
                 grpd <- grpd[idx,]
-
-                write.msp(i,grpd$precurMtchMZ,"",specj[[idx]],of)
+                name = paste(i, grpd$sample, grpd$pid, sep='-')
+                write.msp(name,grpd$precurMtchMZ,"",specj[[idx]],of)
             }
 
             if (opt$mode=="average"){
@@ -171,8 +166,8 @@ for(i in selfrag){
                     }
                         return(c(mz,nint))
                     }))
-                    name = paste(i, grpd$sample, grpd$pid, sep='-')
-                    write.msp(name,mean(grpd$precurMtchMZ),"",averaged_spec,of)
+                    
+                    write.msp(i,mean(grpd$precurMtchMZ),"",averaged_spec,of)
 
             }
         }
