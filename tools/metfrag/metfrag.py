@@ -1,6 +1,8 @@
 import argparse
 import csv
 import os
+import sys
+print(sys.version)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--input')
@@ -73,26 +75,32 @@ with open(args.input,"r") as infile:
                 peaklist.append(line)
 
 
+#outputs might have different headers. Need to get a list of all the headers before we start merging the files
+outfiles = sorted(os.listdir("./tmet"))
+
+headers = []
+for fname in outfiles:
+    with open("./tmet/"+fname) as infile:
+       reader = csv.reader(infile)
+       headers.extend(reader.next())
+
+print headers
+headers = ['UID'] + sorted(list(set(headers)))
+
+print headers
+
 #merge outputs
-outfiles = os.listdir("./tmet")
-with open(args.results, 'a') as outfile:
-    first_write = True
+with open(args.results, 'a') as merged_outfile:
+
+    dwriter = csv.DictWriter(merged_outfile, fieldnames=headers, delimiter='\t')
+    dwriter.writeheader()
+
     for fname in outfiles:
-        fileid = os.path.basename(fname)
-        fileid = fileid.split("_")[0]
+        fileid = os.path.basename(fname).split("_")[0]
         with open("./tmet/"+fname) as infile:
-            reader = csv.reader(infile, delimiter=',', quotechar='"')
+            reader = csv.DictReader(infile, delimiter=',', quotechar='"')
             for line in reader:
-                line = "\t".join(line)
-                if "Score" in line:
-                    if first_write:
-                        newline = "UID\t"+line+"\n"
-                        outfile.write(newline)
-                        first_write = False
-                        outfile.flush()
-                else:
-                    newline = fileid+"\t"+line+"\n"
-                    outfile.write(newline)
-                    outfile.flush()
+                line['UID'] = fileid
+                dwriter.writerow(line)
 
 

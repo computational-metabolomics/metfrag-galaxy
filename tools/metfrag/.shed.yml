@@ -1,0 +1,12 @@
+owner: tomnl
+remote_repository_url: https://github.com/computational-metabolomics/metfrag-galaxy
+homepage_url:  https://github.com/computational-metabolomics/metfrag-galaxy
+categories: ["Metabolomics"]
+description: "[Metabolomics][LC-MS][MS/MS] MetFrag - Perform metfrag analysis (can work with the output from msPurity)"
+auto_tool_repositories:
+  name_template: "{{ tool_id }}"
+  description_template: "[Metabolomics][LC-MS][MS/MS] {{ tool_name }} {{description}}"
+suite:
+  name: "suite_metfrag"
+  description: "wrappers for interacting with MetFrag (and msPurity)"
+long_description: "[Metabolomics][LC-MS][MS/MS] MetFrag - Perform metfrag analysis (can work with the output from msPurity)"
