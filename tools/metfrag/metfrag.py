@@ -13,6 +13,7 @@ parser.add_argument('--ppm_frag')
 parser.add_argument('--fragmasstol')
 parser.add_argument('--polarity')
 parser.add_argument('--results')
+parser.add_argument('--threads')
 
 args = parser.parse_args()
 print args
@@ -65,7 +66,7 @@ with open(args.input,"r") as infile:
                 else:
                     cmd_command += "PrecursorIonMode=-1 "
                 cmd_command += "MetFragCandidateWriter=CSV " ## TSV not available
-                cmd_command += "NumberThreads=1 "
+                cmd_command += "NumberThreads={} ".format(args.threads)
                 # run Metfrag
                 print "metfrag {0}".format(cmd_command)
                 os.system("metfrag {0}".format(cmd_command))

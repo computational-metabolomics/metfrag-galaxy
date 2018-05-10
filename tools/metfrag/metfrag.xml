@@ -1,4 +1,4 @@
-<tool id="metfrag" name="MetFrag" version="0.1.1">
+<tool id="metfrag" name="MetFrag" version="0.1.2">
     <description> </description>
     <requirements>
         <requirement type="package" version="2.4.2">metfrag</requirement>
@@ -15,6 +15,7 @@
             --fragmasstol $fragmasstol
             --polarity $polarity
             --results '$results'
+            --threads \${GALAXY_SLOTS:-4}
     ]]></command>
     <inputs>
         <param name="input" type="data" format="msp,txt" label="MSP file (Output from Create MSP tool)" argument="--input"/>
