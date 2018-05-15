@@ -80,14 +80,24 @@ with open(args.input,"r") as infile:
 outfiles = sorted(os.listdir("./tmet"))
 
 headers = []
+c = 0
 for fname in outfiles:
     with open("./tmet/"+fname) as infile:
-       reader = csv.reader(infile)
-       headers.extend(reader.next())
+        reader = csv.reader(infile)
+        headers.extend(reader.next())
+        # check if file has any data rows 
+        for i, row in enumerate(reader):
+            c+=1
+            if i==1:
+                break
+            
+# if no data rows (e.g. matches) then do not save an output and leave the program        
+if c==0:
+    sys.exit()
+
 
 print headers
 headers = ['UID'] + sorted(list(set(headers)))
-
 print headers
 
 #merge outputs
