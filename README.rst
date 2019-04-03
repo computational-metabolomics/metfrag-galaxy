@@ -16,7 +16,6 @@ Galaxy
 
 TODO
 ----
-- Requirements and update Bioconda (Done)
 - Different data types for input
 - Replace python file with `configfile option <https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-configfiles-configfile>`_
 - Read Adduct annotations, calculate MZs and recursorIonMode
