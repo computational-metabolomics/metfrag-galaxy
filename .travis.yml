@@ -5,7 +5,7 @@ before_install:
  - virtualenv planemo-venv
  - . planemo-venv/bin/activate
  - pip install --upgrade pip setuptools
- - pip install planemo==0.48.0
+ - pip install planemo
 
 script:
 - planemo lint tools/metfrag/. && planemo test tools/metfrag/. --galaxy_branch release_17.09 --no_cache_galaxy
