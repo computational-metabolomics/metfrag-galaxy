@@ -8,4 +8,4 @@ before_install:
  - pip install planemo
 
 script:
-- planemo lint tools/metfrag/. && planemo test tools/metfrag/. --galaxy_branch release_17.09 --no_cache_galaxy
+- planemo lint tools/metfrag/. && planemo test tools/metfrag/. --no_cache_galaxy
