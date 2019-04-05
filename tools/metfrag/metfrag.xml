@@ -5,8 +5,8 @@
     </requirements>
     <command detect_errors="exit_code">
     <![CDATA[
-        #set $tool_directory = $getVar('__tool_directory__', '../../../../tools/msmstools')
-        python $tool_directory/metfrag.py
+
+        python $__tool_directory__/metfrag.py
             --input "$input"
             --db_local '$db_local'
             --db_online '$db_online'
@@ -16,22 +16,58 @@
             --polarity $polarity
             --results '$results'
             --threads \${GALAXY_SLOTS:-4}
+            --minMSMSpeaks $minMSMSpeaks
+
+            $PreProcessFilter.UnconnectedCompoundFilter
+            $PreProcessFilter.IsotopeFilter
+
+            --minelem '$PreProcessFilter.MinimumElementsFilter'
+            --maxelem '$PreProcessFilter.MaximumElementsFilter'
+            --subinclusion '$PreProcessFilter.SmartsSubstructureInclusionFilter'
+            --subexclusion '$PreProcessFilter.SmartsSubstructureExclusionFilter'
+            --eleminclusion '$PreProcessFilter.ElementInclusionFilter'
+            --elemexcluinclusion '$PreProcessFilter.ElementInclusionExclusiveFilter'
+            --elemexclusion '$PreProcessFilter.ElementExclusionFilter'
+
+            --score_thrshld $PostProcessFilter.score_thrshld
+            --pctexplpeak_thrshld $PostProcessFilter.pctexplpeak_thrshld
+
     ]]></command>
     <inputs>
-        <param name="input" type="data" format="msp,txt" label="MSP file (Output from Create MSP tool)" argument="--input"/>
-        <param name="db_local" type="data" format="csv" optional="true" label="Local Database (CSV)" argument="--db_local"/>
-        <param name="db_online" type="select" optional="true" label="Available MetFrag Databases" argument="--db_online">
+
+        <param name="input" type="data" format="msp,txt" label="MSP file (Output from Create MSP tool)"/>
+        <param name="db_local" type="data" format="csv" optional="true" label="Local Database (CSV)"/>
+        <param name="db_online" type="select" optional="true" label="Available MetFrag Databases">
             <option value="PubChem" selected="true">PubChem</option>
             <option value="KEGG">KEGG</option>
             <option value="ChemSpider">ChemSpider</option>
         </param>
-        <param name="ppm" type="integer" value="10" label="Relative Mass Deviation" argument="--ppm"/>
-        <param name="ppm_frag" type="integer" value="5" label="Fragment Peak Match Relative Mass Deviation" argument="--ppm_frag"/>
-        <param name="fragmasstol" type="float" value="0.001" label="Fragment Peak Match Absolute Mass Deviation" argument="--fragmasstol"/>
-        <param name="polarity" type="select" label="Ion Mode" argument="--polarity">
+        <param name="ppm" type="integer" value="10" label="Relative Mass Deviation"/>
+        <param name="ppm_frag" type="integer" value="5" label="Fragment Peak Match Relative Mass Deviation"/>
+        <param name="fragmasstol" type="float" value="0.001" label="Fragment Peak Match Absolute Mass Deviation"/>
+        <param name="polarity" type="select" label="Ion Mode">
             <option value="pos" selected="true">Positive</option>
             <option value="neg">Negative</option>
         </param>
+        <param name="minMSMSpeaks" type="integer" label="Minimum number of MS/MS peaks" value="0"/>
+
+        <section name="PreProcessFilter" title="PreProcessing filters" expanded="False">
+            <param name="UnconnectedCompoundFilter" type="boolean" checked="false" truevalue="--unconnectcompnd" falsevalue="" label="filter non-connected compounds (e.g. salts)" help=""/>
+            <param name="IsotopeFilter" type="boolean" checked="false" truevalue="--isotopefilter" falsevalue="" label="filter compounds containing non-standard isotopes" help=""/>
+            <param name="MinimumElementsFilter" type="text" label="Minimum Elements Filter" help="Filter by minimum of contained elements. Ex: N2O3 include compounds with at least 2 nitrogens and 3 oxygens"/>
+            <param name="MaximumElementsFilter" type="text" label="Maximum Elements Filter" help="Filter by maximum of contained elements. Ex: N5O7 filter out compounds with at maximum 5 nitrogens and 7 oxygens"/>
+            <param name="SmartsSubstructureInclusionFilter" type="text" label="Include substructures" help="Filter by presence of defined sub-structures. Ex: c1ccccc1 include compounds containing benzene"/>
+            <param name="SmartsSubstructureExclusionFilter" type="text" label="Exclude substructures" help="Filter by absence of defined sub-structures. Ex: [OX2H] filter out compounds containing hydroxyl groups"/>
+            <param name="ElementInclusionFilter" type="text" label="Include elements" help="Filter by presence of defined elements (other elements are allowed). Ex: 'N,O' include compounds containing nitrogen and oxygen" />
+            <param name="ElementInclusionExclusiveFilter" type="text" label="Only include these elements" help="Filter by presence of defined elements (no other elements are allowed). Ex: 'N,O' include compounds only composed of nitrogen and oxygen"/>
+            <param name="ElementExclusionFilter" type="text" label="Exclude elements" help="Filter by absence of defined sub-structures. Ex: 'Cl,Br' filter out compounds including bromine or chlorine"/>
+        </section>
+
+        <section name="PostProcessFilter" title="PostProcessing filters" expanded="False">
+            <param name="score_thrshld" type="float" label="Threshold for score after MetFrag search" max="1" min="0" value="0"/>
+            <param name="pctexplpeak_thrshld" type="integer" label="Minimum percentage of explain peaks" max="100" min="0" value="0"/>
+        </section>
+
     </inputs>
     <outputs>
         <data name="results" format="tabular" label="${tool.name} results of ${input.name}" />
