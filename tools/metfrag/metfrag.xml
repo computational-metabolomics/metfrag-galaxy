@@ -7,27 +7,43 @@
     <![CDATA[
 
         python $__tool_directory__/metfrag.py
-            --input "$input"
-            --db_local '$db_local'
-            --db_online '$db_online'
-            --ppm $ppm
-            --ppm_frag $ppm_frag
-            --fragmasstol $fragmasstol
-            --polarity $polarity
-            --results '$results'
-            --threads \${GALAXY_SLOTS:-4}
+            --input_pth "$input"
+            --result_pth '$results'
+            --temp_dir './temp/'
+
+            --cores_top_level \${GALAXY_SLOTS:-4}
+
+            --MetFragDatabaseType '$db_select.MetFragDatabaseType'
+
+            #if $db_select.MetFragDatabaseType == "LocalCSV":
+                --LocalDatabasePath '$db_select.LocalDatabasePath'
+            #elif  $db_select.MetFragDatabaseType == "MetChem":
+                --LocalMetChemDatabaseServerIp '$db_select.LocalMetChemDatabaseServerIp'
+            #end if
+
+            --DatabaseSearchRelativeMassDeviation $DatabaseSearchRelativeMassDeviation
+            --FragmentPeakMatchRelativeMassDeviation $FragmentPeakMatchRelativeMassDeviation
+            --FragmentPeakMatchAbsoluteMassDeviation $FragmentPeakMatchAbsoluteMassDeviation
+            --polarity '$polarity'
+
+            --MetFragScoreTypes '$suspectlist.MetFragScoreTypes'
+            --MetFragScoreWeights '$suspectlist.MetFragScoreWeights'
+            --ScoreSuspectLists '$suspectlist.ScoreSuspectLists'
+
             --minMSMSpeaks $minMSMSpeaks
+            --schema $schema
 
             $PreProcessFilter.UnconnectedCompoundFilter
             $PreProcessFilter.IsotopeFilter
 
-            --minelem '$PreProcessFilter.MinimumElementsFilter'
-            --maxelem '$PreProcessFilter.MaximumElementsFilter'
-            --subinclusion '$PreProcessFilter.SmartsSubstructureInclusionFilter'
-            --subexclusion '$PreProcessFilter.SmartsSubstructureExclusionFilter'
-            --eleminclusion '$PreProcessFilter.ElementInclusionFilter'
-            --elemexcluinclusion '$PreProcessFilter.ElementInclusionExclusiveFilter'
-            --elemexclusion '$PreProcessFilter.ElementExclusionFilter'
+
+            --FilterMinimumElements '$PreProcessFilter.FilterMinimumElements'
+            --FilterMaximumElements '$PreProcessFilter.FilterMaximumElements'
+            --FilterSmartsInclusionList '$PreProcessFilter.FilterSmartsInclusionList'
+            --FilterSmartsExclusionList '$PreProcessFilter.FilterSmartsExclusionList'
+            --FilterIncludedElements '$PreProcessFilter.FilterIncludedElements'
+            --FilterExcludedElements '$PreProcessFilter.FilterExcludedElements'
+            --FilterIncludedExclusiveElements '$PreProcessFilter.FilterIncludedExclusiveElements'
 
             --score_thrshld $PostProcessFilter.score_thrshld
             --pctexplpeak_thrshld $PostProcessFilter.pctexplpeak_thrshld
@@ -36,31 +52,87 @@
     <inputs>
 
         <param name="input" type="data" format="msp,txt" label="MSP file (Output from Create MSP tool)"/>
-        <param name="db_local" type="data" format="csv" optional="true" label="Local Database (CSV)"/>
-        <param name="db_online" type="select" optional="true" label="Available MetFrag Databases">
-            <option value="PubChem" selected="true">PubChem</option>
-            <option value="KEGG">KEGG</option>
-            <option value="ChemSpider">ChemSpider</option>
-        </param>
-        <param name="ppm" type="integer" value="10" label="Relative Mass Deviation"/>
-        <param name="ppm_frag" type="integer" value="5" label="Fragment Peak Match Relative Mass Deviation"/>
-        <param name="fragmasstol" type="float" value="0.001" label="Fragment Peak Match Absolute Mass Deviation"/>
-        <param name="polarity" type="select" label="Ion Mode">
+        <conditional name="db_select">
+             <param name="MetFragDatabaseType" type="select" label="Choose Compound Database" argument="--MetFragDatabaseType">
+                <option value="PubChem" selected="true">PubChem</option>
+                <option value="KEGG">KEGG</option>
+                <option value="LocalCSV">Local database (csv)</option>
+                <option value="MetChem">MetChem</option>
+            </param>
+            <when value="MetChem">
+                <param name="LocalMetChemDatabaseServerIp" type="text" label="MetChem URL" argument="--LocalMetChemDatabaseServerIp" />
+            </when>
+            <when value="LocalCSV">
+                <param name="LocalDatabasePath"  type="data" format="csv" label="Local database of compounds (CSV format)" argument="--LocalDatabasePath"/>
+            </when>
+            <when value="KEGG">
+            </when>
+            <when value="PubChem">
+            </when>
+        </conditional>
+        <param name="DatabaseSearchRelativeMassDeviation" type="float" value="10"
+               label="Relative Mass Deviation for database search (ppm)"  argument="--DatabaseSearchRelativeMassDeviation"
+               help="A value in ppm that defines the deviation of theoretical masses in the database vs. the measured masses"/>
+        <param name="FragmentPeakMatchRelativeMassDeviation" type="float" value="5"
+               label="Fragment Peak Match Relative Mass Deviation (ppm)" argument="--FragmentPeakMatchRelativeMassDeviation"
+               help="Relative mass deviation in ppm of theoretical fragment peaks vs. measured fragment peaks" />
+        <param name="FragmentPeakMatchAbsoluteMassDeviation" type="float" value="0.001"
+               label="Fragment Peak Match Absolute Mass Deviation (Da)" argument="FragmentPeakMatchAbsoluteMassDeviation"
+               help="Absolute mass deviation in Dalton of theoretical fragment peaks vs. measured fragment peaks" />
+        <param name="polarity" type="select" label="Polarity" help="The polarity used for the mode of acquisition">
             <option value="pos" selected="true">Positive</option>
             <option value="neg">Negative</option>
         </param>
-        <param name="minMSMSpeaks" type="integer" label="Minimum number of MS/MS peaks" value="0"/>
+        <param name="schema" type="select" label="Schema" help="The schema used for the MSP file ">
+            <option value="msp" selected="true">Generic MSP</option>
+            <option value="massbank">MassBank</option>
+        </param>
+        <param name="meta_select_col" type="select" label="Choose how additional metadata columns are extracted"
+               help="The MetFrag output can have additional meta data columns added, these can be either extracted
+               from all MSP parameters or from the 'Name' and 'RECORD_TITLE' MSP parameter. ">
+            <option value="name" selected="true">Extra metadata columns from the Name or RECORD_TITLE</option>
+            <option value="all">Extra metadata columns from all MSP parameters</option>
+        </param>
 
+        <conditional name="suspectlist">
+            <param name="suspectselector" type="select" optional="False" label="Suspect list" help="Choose whether to include a suspect list">
+                <option value="includesuspects" >Include suspect list</option>
+                <option value="excludesuspects" selected="True">Do not include suspect list</option>
+            </param>
+            <when value="includesuspects">
+                <param name="ScoreSuspectLists" type="data" format="txt" optional="False" label="Suspect list file" help="File containing a list of suspects" />
+                <param name="MetFragScoreTypes" type="text" value="FragmenterScore,OfflineMetFusionScore,SuspectListScore" optional="False" label="MetFrag Score Types" help="The type of scores MetFrag is calculating. Please do not change the value unless you know what you are doing." />
+                <param name="MetFragScoreWeights" type="text" value="0.4,0.6,1.0" optional="False" label="MetFrag Score Weights" help="The weights of the different score types, separated with a comma and without whitespaces. 1.0 means 100 percent." />
+            </when>
+            <when value="excludesuspects">
+                <param name="ScoreSuspectLists" type="select" optional="False" label="Suspect list file" help="File containing a list of suspects">
+                    <option value="None" selected="True">No suspect list file</option>
+                </param>
+                <param name="MetFragScoreTypes" type="text" value="FragmenterScore,OfflineMetFusionScore" optional="False" label="MetFrag Score Types" help="The type of scores MetFrag is calculating. Please do not change the value unless you know what you are doing." />
+                <param name="MetFragScoreWeights" type="text" value="1.0,1.0" optional="False" label="MetFrag Score Weights" help="The weights of the different score types, separated with a comma and without whitespaces. 1.0 means 100 percent." />
+            </when>
+        </conditional>
+
+        <param name="minMSMSpeaks" type="integer" label="Minimum number of MS/MS peaks" value="0"/>
         <section name="PreProcessFilter" title="PreProcessing filters" expanded="False">
-            <param name="UnconnectedCompoundFilter" type="boolean" checked="false" truevalue="--unconnectcompnd" falsevalue="" label="filter non-connected compounds (e.g. salts)" help=""/>
-            <param name="IsotopeFilter" type="boolean" checked="false" truevalue="--isotopefilter" falsevalue="" label="filter compounds containing non-standard isotopes" help=""/>
-            <param name="MinimumElementsFilter" type="text" label="Minimum Elements Filter" help="Filter by minimum of contained elements. Ex: N2O3 include compounds with at least 2 nitrogens and 3 oxygens"/>
-            <param name="MaximumElementsFilter" type="text" label="Maximum Elements Filter" help="Filter by maximum of contained elements. Ex: N5O7 filter out compounds with at maximum 5 nitrogens and 7 oxygens"/>
-            <param name="SmartsSubstructureInclusionFilter" type="text" label="Include substructures" help="Filter by presence of defined sub-structures. Ex: c1ccccc1 include compounds containing benzene"/>
-            <param name="SmartsSubstructureExclusionFilter" type="text" label="Exclude substructures" help="Filter by absence of defined sub-structures. Ex: [OX2H] filter out compounds containing hydroxyl groups"/>
-            <param name="ElementInclusionFilter" type="text" label="Include elements" help="Filter by presence of defined elements (other elements are allowed). Ex: 'N,O' include compounds containing nitrogen and oxygen" />
-            <param name="ElementInclusionExclusiveFilter" type="text" label="Only include these elements" help="Filter by presence of defined elements (no other elements are allowed). Ex: 'N,O' include compounds only composed of nitrogen and oxygen"/>
-            <param name="ElementExclusionFilter" type="text" label="Exclude elements" help="Filter by absence of defined sub-structures. Ex: 'Cl,Br' filter out compounds including bromine or chlorine"/>
+            <param name="UnconnectedCompoundFilter" type="boolean" checked="false" truevalue="--UnconnectedCompoundFilter"
+                   falsevalue="" label="filter non-connected compounds (e.g. salts)" help=""/>
+            <param name="IsotopeFilter" type="boolean" checked="false" truevalue="--IsotopeFilter" falsevalue=""
+                   label="filter compounds containing non-standard isotopes" help=""/>
+            <param name="FilterMinimumElements" type="text" label="Minimum Elements Filter"
+                   help="Filter by minimum of contained elements. Ex: N2O3 include compounds with at least 2 nitrogens and 3 oxygens"/>
+            <param name="FilterMaximumElements" type="text" label="Maximum Elements Filter"
+                   help="Filter by maximum of contained elements. Ex: N5O7 filter out compounds with at maximum 5 nitrogens and 7 oxygens"/>
+            <param name="FilterSmartsInclusionList" type="text" label="Include substructures"
+                   help="Filter by presence of defined sub-structures. Ex: c1ccccc1 include compounds containing benzene"/>
+            <param name="FilterSmartsExclusionList" type="text" label="Exclude substructures"
+                   help="Filter by absence of defined sub-structures. Ex: [OX2H] filter out compounds containing hydroxyl groups"/>
+            <param name="FilterIncludedElements" type="text" label="Include elements"
+                   help="Filter by presence of defined elements (other elements are allowed). Ex: 'N,O' include compounds containing nitrogen and oxygen" />
+            <param name="FilterIncludedExclusiveElements" type="text" label="Include elements (exclusive)"
+                   help="Filter by presence of defined elements (no other elements are allowed). Ex: 'N,O' include compounds only composed of nitrogen and oxygen" />
+            <param name="FilterExcludedElements" type="text" label="Exclude elements"
+                   help="Filter by absence of defined sub-structures. Ex: 'Cl,Br' filter out compounds including bromine or chlorine"/>
         </section>
 
         <section name="PostProcessFilter" title="PostProcessing filters" expanded="False">
@@ -74,9 +146,18 @@
     </outputs>
     <tests>
         <test>
-            <param name="input" value="input.msp"/>
-            <param name="db_local" value="demo_db.csv"/>
-            <output name="results" file="metfrag.tabular"/>
+            <param name="input" value="massbank_format.txt"/>
+            <param name="schema" value="massbank"/>
+            <param name="MetFragDatabaseType" value="LocalCSV"/>
+            <param name="LocalDatabasePath" value="demo_db.csv"/>
+            <output name="results" file="metfrag_massbank.tabular"/>
+        </test>
+        <test>
+            <param name="input" value="generic_format.msp"/>
+            <param name="schema" value="msp"/>
+            <param name="MetFragDatabaseType" value="LocalCSV"/>
+            <param name="LocalDatabasePath" value="demo_db.csv"/>
+            <output name="results" file="metfrag_msp.tabular"/>
         </test>
     </tests>
     <help>
@@ -98,7 +179,14 @@ Parameters
 
 MSP file created using *Create MSP* tool
 
-**\2a. Local Database (CSV)**
+**\2a. MetFragDatabaseType (public databases)**
+
+* PubChem
+
+* KEGG
+
+
+**\2b. MetFragDatabaseType (local CSV file database)**
 
 Custom database file in CSV format with the following structure:
 
@@ -113,7 +201,7 @@ Custom database file in CSV format with the following structure:
 +-------------+------------------+----------+---------------------------------------------+----------------------+---+
 
 
-    Table continued:
+Table continued:
 
 +---+------------------+-----------------------------+------------------+------------+-------------+
 |...| MolecularFormula | InChIKey                    | InChIKey1        | InChIKey2  | InChIKey3   |
@@ -126,32 +214,68 @@ Custom database file in CSV format with the following structure:
 +---+------------------+-----------------------------+------------------+------------+-------------+
 
 
-**\2b. Online Database**
+**\2b. MetFragDatabaseType MetChem local database**
 
-* PubChem
+MetChem is a modified PubChem database and can be used in replace of PubChem
+for performing API calls to the public PubChem instance. Details regarding how to serve the database can be located
+here:
 
-* KEGG
+**\3. Database Search Relative Mass Deviation - ppm**
 
-* ChemSpider
+A value in ppm that defines the deviation of theoretical masses in the database vs. the measured masses.
 
-**\3. Relative Mass Deviation in PPM**
+**\4. Fragment Peak Match Relative Mass Deviation - ppm**
 
-**\4. Fragment Peak Match Relative Mass Deviation in PPM**
+Relative mass deviation in ppm of theoretical fragment peaks vs. measured fragment peaks.
 
-**\5. Fragment Peak Match Absolute Mass Deviation in Da**
+**\5. Fragment Peak Match Absolute Mass Deviation (Da)**
 
-**\6. Ion Mode**
+Absolute mass deviation in Dalton of theoretical fragment peaks vs. measured fragment peaks.
 
-* Positive
+**\6. Polarity**
 
-* Negative
+The polarity used for the mode of acquisition.
+
+**\7. Schema**
+
+The Schema used by the MSP file (e.g. generic MSP format or MassBank format)
+
+**\8. Suspect list**
+
+Choose whether to include a file containing a list of suspects.
+
+**\9. MetFrag Score Types**
+
+The type of scores MetFrac is using for the calculations. Please do not change the values unless you know what you are doing!
+
+**\10. MetFrag Score Weights**
+
+The weights of the different score types, separated with a comma and without whitespaces. 1.0 means 100%.
+
+**\11. MetFrag Database Type**
+
+Database to choose from.
+
+**\12. minMSMSpeaks**
+
+Minimum MS/MS peaks within a MS/MS spectra to be used for the MetFrag calculation
+
+**\13. PreProcessFilter**
+
+Various filters can be performed on the potential compounds prior to predicting the in silico spectra
+
+**\14. PostProcessFilter**
+        
+To make the output more manageble results below certain criteria can be removed from the pVarious filters can be performed on the potential compounds prior to predicting the in silico spectra
 
 
 Developers and contributors
 ---------------------------
-
 - **Jordi Capellades (j.capellades.to@gmail.com) - Universitat Rovira i Virgili (SP)**
+- **Julien Saint-Vanne (julien.saint-vanne@sb-roscoff.fr) - ABiMS (France)**
+- **Tom Lawson (t.n.lawson@bham.ac.uk) - University of Birmingham (UK)**
 - **Ralf Weber (r.j.weber@bham.ac.uk) - University of Birmingham (UK)**
+
 
     </help>
     <citations>

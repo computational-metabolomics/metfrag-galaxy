@@ -1,3 +1,5 @@
 tools/metfrag/tool_test_output.*
 tool_test_output.*
 planemo-venv/
+.idea/
+.venv/
