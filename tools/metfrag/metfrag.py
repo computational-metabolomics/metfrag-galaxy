@@ -11,7 +11,6 @@ import shutil
 import glob
 import tempfile
 import multiprocessing
-import uuid
 
 from subprocess import call
 from collections import defaultdict
@@ -215,8 +214,10 @@ adduct_types = {
 ######################################################################
 # keep list of commands if performing in CLI in parallel
 cmds = []
-
+# keep a dictionary of all params
 paramds = {}
+# keep count of spectra (for uid)
+spectrac = 0
 
 with open(args.input_pth, "r") as infile:
     numlines = 0
@@ -232,31 +233,41 @@ with open(args.input_pth, "r") as infile:
                 peaklist = []
         elif linesread < numlines:
             # =============== Extract peaks from MSP ==========================
-            line = tuple(line.split("\t"))
+            line = tuple(line.split())  # .split() will split on any empty space (i.e. tab and space)
             # Keep only m/z and intensity, not relative intensity
-            save_line = tuple(line[0].split("\t") + line[1].split("\t"))
+            save_line = tuple(line[0].split() + line[1].split())
             linesread += 1
             peaklist.append(save_line)
 
         elif linesread == numlines:
             # =============== Get sample name and additional details for output =======
             # use a unique uuid4 to keep track of processing (important for multicore)
-            rd = str(uuid.uuid4())
+            #rd = str(uuid.uuid4())
+            spectrac += 1
 
             # Get sample details (if possible to extract) e.g. if created as part of the msPurity pipeline)
-            # choose between getting additional details to add as columns as either all meta data from msp or just
-            # details from the record name (i.e. when using msPurity and we have the columns coded into the name)
+            # choose between getting additional details to add as columns as either all meta data from msp, just
+            # details from the record name (i.e. when using msPurity and we have the columns coded into the name) or
+            # just the spectra index (spectrac)
             if args.meta_select_col == 'name':
-                sampled = {sm.split(":")[0].strip(): sm.split(":")[1].strip() for sm in meta_info['name'].split("|")}
-                paramd['additional_details'] = sampled
-            else:
+                # have additional column of just the name
+                paramd['additional_details'] = {'name': meta_info['name']}
+            elif args.meta_select_col == 'name_split':
+                # have additional columns split by "|" and then on ":" e.g. MZ:100.2 | RT:20 | xcms_grp_id:1
+                sampled = {sm.split(":")[0].strip(): sm.split(":")[1].strip() for sm in
+                               meta_info['name'].split("|")}
+            elif args.meta_select_col == 'all':
+                # have additional columns based on all the meta information extracted from the MSP
                 paramd['additional_details'] = meta_info
+            else:
+                # Just have and index of the spectra in the MSP file
+                paramd['additional_details'] = {'spectra_idx': spectrac}
 
-            paramd["SampleName"] = "{}_metfrag_result".format(rd)
+            paramd["SampleName"] = "{}_metfrag_result".format(spectrac)
 
             # =============== Output peaks to txt file  ==============================
             numlines = 0
-            paramd["PeakListPath"] = os.path.join(wd, "{}_tmpspec.txt".format(rd))
+            paramd["PeakListPath"] = os.path.join(wd, "{}_tmpspec.txt".format(spectrac))
             print(paramd["PeakListPath"])
             # write spec file
             with open(paramd["PeakListPath"], 'w') as outfile:
@@ -342,7 +353,8 @@ headers = additional_detail_headers + sorted(list(set(headers)))
 
 # merge outputs
 with open(args.result_pth, 'a') as merged_outfile:
-    dwriter = csv.DictWriter(merged_outfile, fieldnames=headers, delimiter='\t')
+    dwriter = csv.DictWriter(merged_outfile, fieldnames=headers, delimiter='\t', quotechar='"',
+        quoting=csv.QUOTE_NONNUMERIC,)
     dwriter.writeheader()
 
     for fn in outfiles:

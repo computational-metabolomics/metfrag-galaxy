@@ -30,6 +30,7 @@
             --MetFragScoreWeights '$suspectlist.MetFragScoreWeights'
             --ScoreSuspectLists '$suspectlist.ScoreSuspectLists'
 
+            --meta_select_col $meta_select_col
             --minMSMSpeaks $minMSMSpeaks
             --schema $schema
 
@@ -89,8 +90,11 @@
         </param>
         <param name="meta_select_col" type="select" label="Choose how additional metadata columns are extracted"
                help="The MetFrag output can have additional meta data columns added, these can be either extracted
-               from all MSP parameters or from the 'Name' and 'RECORD_TITLE' MSP parameter. ">
+               from all MSP parameters or from the 'Name' and 'RECORD_TITLE' MSP parameter. Additionally, columns
+               can be added from the 'Name' or 'RECORD_TITLE' parameter by splitting on | and :
+               e.g. 'MZ:100.2 | RT:20 | xcms_grp_id:1' would create MZ,RT and xcms_grp_id columns">
             <option value="name" selected="true">Extra metadata columns from the Name or RECORD_TITLE</option>
+            <option value="name_split" >Extra metadata columns from the Name or RECORD_TITLE (each column is split on "|" and ":" ) </option>
             <option value="all">Extra metadata columns from all MSP parameters</option>
         </param>
 
@@ -158,6 +162,21 @@
             <param name="MetFragDatabaseType" value="LocalCSV"/>
             <param name="LocalDatabasePath" value="demo_db.csv"/>
             <output name="results" file="metfrag_msp.tabular"/>
+        </test>
+        <test>
+            <param name="input" value="FU000001.txt"/>
+            <param name="schema" value="massbank"/>
+            <param name="MetFragDatabaseType" value="LocalCSV"/>
+            <param name="LocalDatabasePath" value="demo_db.csv"/>
+            <output name="results" file="FU000001.tabular"/>
+        </test>
+        <test>
+            <param name="input" value="FU000001.txt"/>
+            <param name="schema" value="massbank"/>
+            <param name="MetFragDatabaseType" value="LocalCSV"/>
+            <param name="LocalDatabasePath" value="demo_db.csv"/>
+            <param name="meta_select_col" value="all"/>
+            <output name="results" file="FU000001_all_col.tabular"/>
         </test>
     </tests>
     <help>
@@ -265,7 +284,7 @@ Minimum MS/MS peaks within a MS/MS spectra to be used for the MetFrag calculatio
 Various filters can be performed on the potential compounds prior to predicting the in silico spectra
 
 **\14. PostProcessFilter**
-        
+
 To make the output more manageble results below certain criteria can be removed from the pVarious filters can be performed on the potential compounds prior to predicting the in silico spectra
 
 
