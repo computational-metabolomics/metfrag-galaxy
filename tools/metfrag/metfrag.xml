@@ -1,4 +1,4 @@
-<tool id="metfrag" name="MetFrag" version="0.1.3">
+<tool id="metfrag" name="MetFrag" version="0.1.5">
     <description> </description>
     <requirements>
         <requirement type="package" version="2.4.2">metfrag</requirement>
@@ -84,8 +84,10 @@
             <option value="pos" selected="true">Positive</option>
             <option value="neg">Negative</option>
         </param>
-        <param name="schema" type="select" label="Schema" help="The schema used for the MSP file ">
-            <option value="msp" selected="true">Generic MSP</option>
+        <param name="schema" type="select" label="Schema"
+               help="The schema used for the MSP file (auto will try automatically determine the schema)">
+            <option value="auto" selected="True">Auto</option>
+            <option value="msp" >Generic MSP</option>
             <option value="massbank">MassBank</option>
         </param>
         <param name="meta_select_col" type="select" label="Choose how additional metadata columns are extracted"
@@ -165,7 +167,6 @@
         </test>
         <test>
             <param name="input" value="FU000001.txt"/>
-            <param name="schema" value="massbank"/>
             <param name="MetFragDatabaseType" value="LocalCSV"/>
             <param name="LocalDatabasePath" value="demo_db.csv"/>
             <output name="results" file="FU000001.tabular"/>
@@ -178,6 +179,16 @@
             <param name="meta_select_col" value="all"/>
             <output name="results" file="FU000001_all_col.tabular"/>
         </test>
+        <test>
+            <param name="input" value="FU000001.txt"/>
+            <param name="schema" value="massbank"/>
+            <param name="suspectlist|suspectselector" value="includesuspects"/>
+            <param name="suspectlist|ScoreSuspectLists" value="UNPD_DB.inchikeys.txt"/>
+            <param name="suspectlist|MetFragScoreTypes" value="FragmenterScore,OfflineMetFusionScore,SuspectListScore"/>
+            <param name="suspectlist|MetFragScoreWeights" value="0.4,0.6,1.0"/>
+            <output name="results" file="FU000001_suspect.txt"/>
+        </test>
+
     </tests>
     <help>
 -------

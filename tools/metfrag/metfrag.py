@@ -27,6 +27,8 @@ parser.add_argument('--minMSMSpeaks', default=1)
 
 parser.add_argument('--MetFragDatabaseType', default='PubChem')
 parser.add_argument('--LocalDatabasePath', default='')
+parser.add_argument('--LocalMetChemDatabaseServerIp', default='')
+
 parser.add_argument('--DatabaseSearchRelativeMassDeviation', default=5)
 parser.add_argument('--FragmentPeakMatchRelativeMassDeviation', default=10)
 parser.add_argument('--FragmentPeakMatchAbsoluteMassDeviation', default=0.001)
@@ -161,26 +163,41 @@ print(paramd)
 ######################################################################
 # Setup regular expressions for MSP parsing dictionary
 ######################################################################
-meta_regex = {}
+regex_msp = {}
+regex_msp['name'] = ['^Name(?:=|:)(.*)$']
+regex_msp['polarity'] = ['^ion.*mode(?:=|:)(.*)$', '^ionization.*mode(?:=|:)(.*)$', '^polarity(?:=|:)(.*)$']
+regex_msp['precursor_mz'] = ['^precursor.*m/z(?:=|:)\s*(\d*[.,]?\d*)$', '^precursor.*mz(?:=|:)\s*(\d*[.,]?\d*)$']
+regex_msp['precursor_type'] = ['^precursor.*type(?:=|:)(.*)$', '^adduct(?:=|:)(.*)$']
+regex_msp['num_peaks'] = ['^Num.*Peaks(?:=|:)\s*(\d*)$']
+regex_msp['msp'] = ['^Name(?:=|:)(.*)$']  # Flag for standard MSP format
+
+regex_massbank = {}
+regex_massbank['name'] = ['^RECORD_TITLE:(.*)$']
+regex_massbank['polarity'] = ['^AC\$MASS_SPECTROMETRY:\s+ION_MODE\s+(.*)$']
+regex_massbank['precursor_mz'] = ['^MS\$FOCUSED_ION:\s+PRECURSOR_M/Z\s+(\d*[.,]?\d*)$']
+regex_massbank['precursor_type'] = ['^MS\$FOCUSED_ION:\s+PRECURSOR_TYPE\s+(.*)$']
+regex_massbank['num_peaks'] = ['^PK\$NUM_PEAK:\s+(\d*)']
+regex_massbank['cols'] = ['^PK\$PEAK:\s+(.*)']
+regex_massbank['massbank'] = ['^RECORD_TITLE:(.*)$']  # Flag for massbank format
 
 if args.schema == 'msp':
-    meta_regex['name'] = ['^Name(?:=|:)(.*)$']
-    meta_regex['polarity'] = ['^ion.*mode(?:=|:)(.*)$', '^ionization.*mode(?:=|:)(.*)$', '^polarity(?:=|:)(.*)$']
-    meta_regex['precursor_mz'] = ['^precursor m/z(?:=|:)\s*(\d*[.,]?\d*)$', '^precursor.*mz(?:=|:)\s*(\d*[.,]?\d*)$']
-    meta_regex['precursor_type'] = ['^precursor.*type(?:=|:)(.*)$', '^adduct(?:=|:)(.*)$']
-    meta_regex['num_peaks'] = ['^Num.*Peaks(?:=|:)\s*(\d*)$']
-    start_spectra = 'num_peaks'
-
+    meta_regex = regex_msp
 elif args.schema == 'massbank':
-    meta_regex['name'] = ['^RECORD_TITLE:(.*)$']
-    meta_regex['polarity'] = ['^AC\$MASS_SPECTROMETRY:\s+ION_MODE\s+(.*)$']
-    meta_regex['precursor_mz'] = ['^MS\$FOCUSED_ION:\s+PRECURSOR_M/Z\s+(\d*[.,]?\d*)$']
-    meta_regex['precursor_type'] = ['^MS\$FOCUSED_ION:\s+PRECURSOR_TYPE\s+(.*)$']
-    meta_regex['num_peaks'] = ['^PK\$NUM_PEAK:\s+(\d*)']
-    meta_regex['cols'] = ['^PK\$PEAK:\s+(.*)']
-    start_spectra = 'cols'
-else:
-    exit('Schema needs to be either "msp" or "massbank"')
+    meta_regex = regex_massbank
+elif args.schema == 'auto':
+    # If auto we just check for all the available paramter names and then determine if Massbank or MSP based on
+    # the name parameter
+    meta_regex = {}
+    meta_regex.update(regex_massbank)
+    meta_regex['name'].extend(regex_msp['name'])
+    meta_regex['polarity'].extend(regex_msp['polarity'])
+    meta_regex['precursor_mz'].extend(regex_msp['precursor_mz'])
+    meta_regex['precursor_type'].extend(regex_msp['precursor_type'])
+    meta_regex['num_peaks'].extend(regex_msp['num_peaks'])
+
+    print(meta_regex)
+
+
 
 # this dictionary will store the meta data results form the MSp file
 meta_info = {}
@@ -227,10 +244,13 @@ with open(args.input_pth, "r") as infile:
         if numlines == 0:
             # =============== Extract metadata from MSP ========================
             meta_info = parse_meta(meta_regex, meta_info)
-            if start_spectra in meta_info:
+            print(meta_info)
+            if ('massbank' in meta_info and 'cols' in meta_info) or ('msp' in meta_info and 'num_peaks' in meta_info):
+                print('check')
                 numlines = int(meta_info['num_peaks'])
                 linesread = 0
                 peaklist = []
+
         elif linesread < numlines:
             # =============== Extract peaks from MSP ==========================
             line = tuple(line.split())  # .split() will split on any empty space (i.e. tab and space)

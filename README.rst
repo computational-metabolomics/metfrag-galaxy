@@ -12,7 +12,7 @@ Source code: https://github.com/c-ruttkies/MetFrag
 Version
 ------
 
-0.1.4
+0.1.5
 
 
 Galaxy
@@ -22,10 +22,9 @@ Galaxy
 
 TODO
 ----
-- Different data types for input
-- Replace python file with `configfile option <https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-configfiles-configfile>`_
-- Read Adduct annotations, calculate MZs and recursorIonMode
-- Run in parallel
+- Additional adduct options
+- Additional unit-tests
+
 
 
 Suspect list
@@ -48,6 +47,11 @@ Developers & Contributors
 
 Changes
 -------
+
+Version 0.1.5:
+ - Fix to add MetChem command line param
+ - Added auto select for MSP schema
+ - added unit test for suspect list
 
 Version 0.1.4:
  - added UNPD InCHIkey database to be used for automated testing
