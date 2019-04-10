@@ -167,7 +167,7 @@ regex_msp = {}
 regex_msp['name'] = ['^Name(?:=|:)(.*)$']
 regex_msp['polarity'] = ['^ion.*mode(?:=|:)(.*)$', '^ionization.*mode(?:=|:)(.*)$', '^polarity(?:=|:)(.*)$']
 regex_msp['precursor_mz'] = ['^precursor.*m/z(?:=|:)\s*(\d*[.,]?\d*)$', '^precursor.*mz(?:=|:)\s*(\d*[.,]?\d*)$']
-regex_msp['precursor_type'] = ['^precursor.*type(?:=|:)(.*)$', '^adduct(?:=|:)(.*)$']
+regex_msp['precursor_type'] = ['^precursor.*type(?:=|:)(.*)$', '^adduct(?:=|:)(.*)$', '^ADDUCTIONNAME(?:=|:)(.*)$']
 regex_msp['num_peaks'] = ['^Num.*Peaks(?:=|:)\s*(\d*)$']
 regex_msp['msp'] = ['^Name(?:=|:)(.*)$']  # Flag for standard MSP format
 
@@ -194,6 +194,7 @@ elif args.schema == 'auto':
     meta_regex['precursor_mz'].extend(regex_msp['precursor_mz'])
     meta_regex['precursor_type'].extend(regex_msp['precursor_type'])
     meta_regex['num_peaks'].extend(regex_msp['num_peaks'])
+    meta_regex['msp'] = regex_msp['msp']
 
     print(meta_regex)
 
@@ -244,9 +245,9 @@ with open(args.input_pth, "r") as infile:
         if numlines == 0:
             # =============== Extract metadata from MSP ========================
             meta_info = parse_meta(meta_regex, meta_info)
-
+            print(meta_info)
             if ('massbank' in meta_info and 'cols' in meta_info) or ('msp' in meta_info and 'num_peaks' in meta_info):
-
+                print('check')
                 numlines = int(meta_info['num_peaks'])
                 linesread = 0
                 peaklist = []

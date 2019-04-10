@@ -172,6 +172,18 @@
             <output name="results" file="FU000001.tabular"/>
         </test>
         <test>
+            <param name="input" value="winter_pos.msp"/>
+            <param name="schema" value="msp"/>
+            <param name="MetFragDatabaseType" value="PubChem"/>
+            <output name="results" file="winter_pos.tabular"/>
+        </test>
+        <test>
+            <param name="input" value="winter_pos.msp"/>
+            <param name="schema" value="auto"/>
+            <param name="MetFragDatabaseType" value="PubChem"/>
+            <output name="results" file="winter_pos_auto.tabular"/>
+        </test>
+        <test>
             <param name="input" value="FU000001.txt"/>
             <param name="schema" value="massbank"/>
             <param name="MetFragDatabaseType" value="LocalCSV"/>
@@ -188,7 +200,6 @@
             <param name="suspectlist|MetFragScoreWeights" value="0.4,0.6,1.0"/>
             <output name="results" file="FU000001_suspect.txt"/>
         </test>
-
     </tests>
     <help>
 -------
