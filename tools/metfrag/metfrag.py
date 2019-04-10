@@ -244,9 +244,9 @@ with open(args.input_pth, "r") as infile:
         if numlines == 0:
             # =============== Extract metadata from MSP ========================
             meta_info = parse_meta(meta_regex, meta_info)
-            print(meta_info)
+
             if ('massbank' in meta_info and 'cols' in meta_info) or ('msp' in meta_info and 'num_peaks' in meta_info):
-                print('check')
+
                 numlines = int(meta_info['num_peaks'])
                 linesread = 0
                 peaklist = []
