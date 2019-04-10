@@ -53,6 +53,10 @@ Version 0.1.4:
  - added UNPD InCHIkey database to be used for automated testing
  - acknowledge additional contributors
 
+Vewrsion 0.1.3:
+ - merge with the latest PhenoMeNal develop version of the module, based on https://github.com/korseby/container-msnbase
+ - merge with changes of Julien Saint-Vanne
+
 
 License
 -------
