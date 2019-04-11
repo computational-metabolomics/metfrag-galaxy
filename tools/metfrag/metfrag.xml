@@ -54,14 +54,16 @@
 
         <param name="input" type="data" format="msp,txt" label="MSP file (Output from Create MSP tool)"/>
         <conditional name="db_select">
-             <param name="MetFragDatabaseType" type="select" label="Choose Compound Database" argument="--MetFragDatabaseType">
+             <param name="MetFragDatabaseType" type="select" label="Choose Compound Database"
+                    argument="--MetFragDatabaseType">
                 <option value="PubChem" selected="true">PubChem</option>
                 <option value="KEGG">KEGG</option>
                 <option value="LocalCSV">Local database (csv)</option>
                 <option value="MetChem">MetChem</option>
             </param>
             <when value="MetChem">
-                <param name="LocalMetChemDatabaseServerIp" type="text" label="MetChem URL" argument="--LocalMetChemDatabaseServerIp" />
+                <param name="LocalMetChemDatabaseServerIp" type="text" label="MetChem URL"
+                       argument="--LocalMetChemDatabaseServerIp" />
             </when>
             <when value="LocalCSV">
                 <param name="LocalDatabasePath"  type="data" format="csv" label="Local database of compounds (CSV format)" argument="--LocalDatabasePath"/>
@@ -173,15 +175,9 @@
         </test>
         <test>
             <param name="input" value="winter_pos.msp"/>
-            <param name="schema" value="msp"/>
+            <param name="PostProcessFilter|score_thrshld" value="0.9"/>
             <param name="MetFragDatabaseType" value="PubChem"/>
             <output name="results" file="winter_pos.tabular"/>
-        </test>
-        <test>
-            <param name="input" value="winter_pos.msp"/>
-            <param name="schema" value="auto"/>
-            <param name="MetFragDatabaseType" value="PubChem"/>
-            <output name="results" file="winter_pos_auto.tabular"/>
         </test>
         <test>
             <param name="input" value="FU000001.txt"/>

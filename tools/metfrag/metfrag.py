@@ -398,9 +398,14 @@ with open(args.result_pth, 'a') as merged_outfile:
                     elif key == "NumberPeaksUsed":
                         totpeaks = float(value)
                 # Filter with a relative number of peak matched
-                pctexplpeak = nbfindpeak / totpeaks * 100
-                if pctexplpeak < float(args.pctexplpeak_thrshld):
+                try:
+                    pctexplpeak = nbfindpeak / totpeaks * 100
+                except ZeroDivisionError:
                     bewrite = False
+                else:
+                    if pctexplpeak < float(args.pctexplpeak_thrshld):
+                        bewrite = False
+
                 # Write the line if it pass all filters
                 if bewrite:
                     bfn = os.path.basename(fn)

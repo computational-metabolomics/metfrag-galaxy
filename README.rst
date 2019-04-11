@@ -47,11 +47,13 @@ Developers & Contributors
 
 Changes
 -------
+Version 0.1.6:
+ - Bug Fix for when NoExplPeaks is zero
 
 Version 0.1.5:
  - Fix to add MetChem command line param
  - Added auto select for MSP schema
- - added unit test for suspect list
+ - Added unit test for suspect list
 
 Version 0.1.4:
  - added UNPD InCHIkey database to be used for automated testing
