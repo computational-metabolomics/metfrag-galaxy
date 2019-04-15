@@ -69,7 +69,7 @@ License
 Released under the GNU General Public License v3.0 (see LICENSE file)
 
 
-.. |Build Status (Travis)| image:: https://img.shields.io/travis/computational-metabolomics/metfrag-galaxy.svg?style=flat&maxAge=3600&label=Travis-CI
+.. |Build Status (Travis)| image:: https://img.shields.io/travis/computational-metabolomics/metfrag-galaxy/master.svg?style=flat&maxAge=3600&label=Travis-CI
    :target: https://travis-ci.org/computational-metabolomics/metfrag-galaxy
 
 .. |Git| image:: https://img.shields.io/badge/repository-GitHub-blue.svg?style=flat&maxAge=3600
