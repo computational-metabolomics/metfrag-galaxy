@@ -12,7 +12,7 @@ Source code: https://github.com/c-ruttkies/MetFrag
 Version
 ------
 
-0.1.5
+0.1.6
 
 
 Galaxy
