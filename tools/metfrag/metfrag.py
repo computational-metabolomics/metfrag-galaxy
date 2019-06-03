@@ -71,96 +71,6 @@ else:
     os.makedirs(wd)
 
 ######################################################################
-# Setup parameter dictionary
-######################################################################
-paramd = defaultdict()
-
-paramd["MetFragDatabaseType"] = args.MetFragDatabaseType
-
-if args.MetFragDatabaseType == "LocalCSV":
-    paramd["LocalDatabasePath"] = args.LocalDatabasePath
-elif args.MetFragDatabaseType == "MetChem":
-    paramd["LocalMetChemDatabase"] = "metchem"
-    paramd["LocalMetChemDatabasePortNumber"] = 5432
-    paramd["LocalMetChemDatabaseServerIp"] = args.LocalMetChemDatabaseServerIp
-    paramd["LocalMetChemDatabaseUser"] = "metchemro"
-    paramd["LocalMetChemDatabasePassword"] = "metchemro"
-
-paramd["FragmentPeakMatchAbsoluteMassDeviation"] = args.FragmentPeakMatchAbsoluteMassDeviation
-paramd["FragmentPeakMatchRelativeMassDeviation"] = args.FragmentPeakMatchRelativeMassDeviation
-paramd["DatabaseSearchRelativeMassDeviation"] = args.DatabaseSearchRelativeMassDeviation
-paramd["SampleName"] = ''
-paramd["ResultsPath"] = os.path.join(wd)
-
-if args.polarity == "pos":
-    paramd["IsPositiveIonMode"] = True
-    paramd["PrecursorIonModeDefault"] = "1"
-    paramd["PrecursorIonMode"] = "1"
-    paramd["nm_mass_diff_default"] = 1.007276
-else:
-    paramd["IsPositiveIonMode"] = False
-    paramd["PrecursorIonModeDefault"] = "-1"
-    paramd["PrecursorIonMode"] = "-1"
-    paramd["nm_mass_diff_default"] = -1.007276
-
-paramd["MetFragCandidateWriter"] = "CSV"
-paramd["NumberThreads"] = args.NumberThreads
-
-if args.ScoreSuspectLists:
-    paramd["ScoreSuspectLists"] = args.ScoreSuspectLists
-
-paramd["MetFragScoreTypes"] = args.MetFragScoreTypes
-paramd["MetFragScoreWeights"] = args.MetFragScoreWeights
-
-dct_filter = defaultdict()
-filterh = []
-
-if args.UnconnectedCompoundFilter:
-    filterh.append('UnconnectedCompoundFilter')
-
-if args.IsotopeFilter:
-    filterh.append('IsotopeFilter')
-
-if args.FilterMinimumElements:
-    filterh.append('MinimumElementsFilter')
-    dct_filter['FilterMinimumElements'] = args.FilterMinimumElements
-
-if args.FilterMaximumElements:
-    filterh.append('MaximumElementsFilter')
-    dct_filter['FilterMaximumElements'] = args.FilterMaximumElements
-
-if args.FilterSmartsInclusionList:
-    filterh.append('SmartsSubstructureInclusionFilter')
-    dct_filter['FilterSmartsInclusionList'] = args.FilterSmartsInclusionList
-
-if args.FilterSmartsExclusionList:
-    filterh.append('SmartsSubstructureExclusionFilter')
-    dct_filter['FilterSmartsExclusionList'] = args.FilterSmartsExclusionList
-
-# My understanding is that both 'ElementInclusionExclusiveFilter' and 'ElementExclusionFilter' use
-# 'FilterIncludedElements'
-if args.FilterIncludedExclusiveElements:
-    filterh.append('ElementInclusionExclusiveFilter')
-    dct_filter['FilterIncludedElements'] = args.FilterIncludedExclusiveElements
-
-if args.FilterIncludedElements:
-    filterh.append('ElementInclusionFilter')
-    dct_filter['FilterIncludedElements'] = args.FilterIncludedElements
-
-if args.FilterExcludedElements:
-    filterh.append('ElementExclusionFilter')
-    dct_filter['FilterExcludedElements'] = args.FilterExcludedElements
-
-if filterh:
-    fcmds = ','.join(filterh) + ' '
-    for k, v in six.iteritems(dct_filter):
-        fcmds += "{0}={1} ".format(str(k), str(v))
-
-    paramd["MetFragPreProcessingCandidateFilter"] = fcmds
-
-print(paramd)
-
-######################################################################
 # Setup regular expressions for MSP parsing dictionary
 ######################################################################
 regex_msp = {}
@@ -198,22 +108,6 @@ elif args.schema == 'auto':
 
     print(meta_regex)
 
-
-
-# this dictionary will store the meta data results form the MSp file
-meta_info = {}
-
-
-# function to extract the meta data using the regular expressions
-def parse_meta(meta_regex, meta_info={}):
-    for k, regexes in six.iteritems(meta_regex):
-        for reg in regexes:
-            m = re.search(reg, line, re.IGNORECASE)
-            if m:
-                meta_info[k] = '-'.join(m.groups()).strip()
-    return meta_info
-
-
 adduct_types = {
     '[M+H]+': 1.007276,
     '[M+NH4]+': 18.034374,
@@ -227,6 +121,178 @@ adduct_types = {
     '[M+Cl]-': 34.969402,
 }
 
+# function to extract the meta data using the regular expressions
+def parse_meta(meta_regex, meta_info={}):
+    for k, regexes in six.iteritems(meta_regex):
+        for reg in regexes:
+            m = re.search(reg, line, re.IGNORECASE)
+            if m:
+                meta_info[k] = '-'.join(m.groups()).strip()
+    return meta_info
+
+
+
+######################################################################
+# Setup parameter dictionary
+######################################################################
+def init_paramd(args):
+    paramd = defaultdict()
+
+    paramd["MetFragDatabaseType"] = args.MetFragDatabaseType
+
+    if args.MetFragDatabaseType == "LocalCSV":
+        paramd["LocalDatabasePath"] = args.LocalDatabasePath
+    elif args.MetFragDatabaseType == "MetChem":
+        paramd["LocalMetChemDatabase"] = "metchem"
+        paramd["LocalMetChemDatabasePortNumber"] = 5432
+        paramd["LocalMetChemDatabaseServerIp"] = args.LocalMetChemDatabaseServerIp
+        paramd["LocalMetChemDatabaseUser"] = "metchemro"
+        paramd["LocalMetChemDatabasePassword"] = "metchemro"
+
+    paramd["FragmentPeakMatchAbsoluteMassDeviation"] = args.FragmentPeakMatchAbsoluteMassDeviation
+    paramd["FragmentPeakMatchRelativeMassDeviation"] = args.FragmentPeakMatchRelativeMassDeviation
+    paramd["DatabaseSearchRelativeMassDeviation"] = args.DatabaseSearchRelativeMassDeviation
+    paramd["SampleName"] = ''
+    paramd["ResultsPath"] = os.path.join(wd)
+
+    if args.polarity == "pos":
+        paramd["IsPositiveIonMode"] = True
+        paramd["PrecursorIonModeDefault"] = "1"
+        paramd["PrecursorIonMode"] = "1"
+        paramd["nm_mass_diff_default"] = 1.007276
+    else:
+        paramd["IsPositiveIonMode"] = False
+        paramd["PrecursorIonModeDefault"] = "-1"
+        paramd["PrecursorIonMode"] = "-1"
+        paramd["nm_mass_diff_default"] = -1.007276
+
+    paramd["MetFragCandidateWriter"] = "CSV"
+    paramd["NumberThreads"] = args.NumberThreads
+
+    if args.ScoreSuspectLists:
+        paramd["ScoreSuspectLists"] = args.ScoreSuspectLists
+
+    paramd["MetFragScoreTypes"] = args.MetFragScoreTypes
+    paramd["MetFragScoreWeights"] = args.MetFragScoreWeights
+
+    dct_filter = defaultdict()
+    filterh = []
+
+    if args.UnconnectedCompoundFilter:
+        filterh.append('UnconnectedCompoundFilter')
+
+    if args.IsotopeFilter:
+        filterh.append('IsotopeFilter')
+
+    if args.FilterMinimumElements:
+        filterh.append('MinimumElementsFilter')
+        dct_filter['FilterMinimumElements'] = args.FilterMinimumElements
+
+    if args.FilterMaximumElements:
+        filterh.append('MaximumElementsFilter')
+        dct_filter['FilterMaximumElements'] = args.FilterMaximumElements
+
+    if args.FilterSmartsInclusionList:
+        filterh.append('SmartsSubstructureInclusionFilter')
+        dct_filter['FilterSmartsInclusionList'] = args.FilterSmartsInclusionList
+
+    if args.FilterSmartsExclusionList:
+        filterh.append('SmartsSubstructureExclusionFilter')
+        dct_filter['FilterSmartsExclusionList'] = args.FilterSmartsExclusionList
+
+    # My understanding is that both 'ElementInclusionExclusiveFilter' and 'ElementExclusionFilter' use
+    # 'FilterIncludedElements'
+    if args.FilterIncludedExclusiveElements:
+        filterh.append('ElementInclusionExclusiveFilter')
+        dct_filter['FilterIncludedElements'] = args.FilterIncludedExclusiveElements
+
+    if args.FilterIncludedElements:
+        filterh.append('ElementInclusionFilter')
+        dct_filter['FilterIncludedElements'] = args.FilterIncludedElements
+
+    if args.FilterExcludedElements:
+        filterh.append('ElementExclusionFilter')
+        dct_filter['FilterExcludedElements'] = args.FilterExcludedElements
+
+    if filterh:
+        fcmds = ','.join(filterh) + ' '
+        for k, v in six.iteritems(dct_filter):
+            fcmds += "{0}={1} ".format(str(k), str(v))
+
+        paramd["MetFragPreProcessingCandidateFilter"] = fcmds
+
+    return paramd
+
+
+######################################################################
+# Function to run metfrag when all metainfo and peaks have been parsed
+######################################################################
+def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
+    # Get sample details (if possible to extract) e.g. if created as part of the msPurity pipeline)
+    # choose between getting additional details to add as columns as either all meta data from msp, just
+    # details from the record name (i.e. when using msPurity and we have the columns coded into the name) or
+    # just the spectra index (spectrac)]
+    # Returns the parameters used and the command line call
+
+    paramd = init_paramd(args)
+    if args.meta_select_col == 'name':
+        # have additional column of just the name
+        paramd['additional_details'] = {'name': meta_info['name']}
+    elif args.meta_select_col == 'name_split':
+        # have additional columns split by "|" and then on ":" e.g. MZ:100.2 | RT:20 | xcms_grp_id:1
+        paramd['additional_details'] = {sm.split(":")[0].strip(): sm.split(":")[1].strip() for sm in
+                   meta_info['name'].split("|")}
+    elif args.meta_select_col == 'all':
+        # have additional columns based on all the meta information extracted from the MSP
+        paramd['additional_details'] = meta_info
+    else:
+        # Just have and index of the spectra in the MSP file
+        paramd['additional_details'] = {'spectra_idx': spectrac}
+
+    paramd["SampleName"] = "{}_metfrag_result".format(spectrac)
+
+    # =============== Output peaks to txt file  ==============================
+    paramd["PeakListPath"] = os.path.join(wd, "{}_tmpspec.txt".format(spectrac))
+
+    # write spec file
+    with open(paramd["PeakListPath"], 'w') as outfile:
+        for p in peaklist:
+            outfile.write(p[0] + "\t" + p[1] + "\n")
+
+    # =============== Update param based on MSP metadata ======================
+    # Replace param details with details from MSP if required
+    if 'precursor_type' in meta_info and meta_info['precursor_type'] in adduct_types:
+
+        nm = float(meta_info['precursor_mz']) + adduct_types[meta_info['precursor_type']]
+        paramd["PrecursorIonMode"] = int(round(adduct_types[meta_info['precursor_type']], 0))
+    else:
+
+        paramd["PrecursorIonMode"] = paramd['PrecursorIonModeDefault']
+        nm = float(meta_info['precursor_mz']) + paramd['nm_mass_diff_default']
+
+    paramd["NeutralPrecursorMass"] = nm
+
+    # =============== Create CLI cmd for metfrag ===============================
+    cmd = "metfrag"
+    for k, v in six.iteritems(paramd):
+        if not k in ['PrecursorIonModeDefault', 'nm_mass_diff_default', 'additional_details']:
+            cmd += " {}={}".format(str(k), str(v))
+
+    # =============== Run metfrag ==============================================
+    # Filter before process with a minimum number of MS/MS peaks
+    if plinesread >= float(args.minMSMSpeaks):
+
+        if int(args.cores_top_level) == 1:
+            os.system(cmd)
+
+    return paramd, cmd
+
+
+def work(cmds):
+    return [os.system(cmd) for cmd in cmds]
+
+
+
 ######################################################################
 # Parse MSP file and run metfrag CLI
 ######################################################################
@@ -236,100 +302,57 @@ cmds = []
 paramds = {}
 # keep count of spectra (for uid)
 spectrac = 0
+# this dictionary will store the meta data results form the MSp file
+meta_info = {}
 
 with open(args.input_pth, "r") as infile:
-    numlines = 0
+    # number of lines for the peaks
+    pnumlines = 0
+    # number of lines read for the peaks
+    plinesread = 0
     for line in infile:
         line = line.strip()
-        print(line)
-        if numlines == 0:
+
+        if pnumlines == 0:
             # =============== Extract metadata from MSP ========================
             meta_info = parse_meta(meta_regex, meta_info)
-            print(meta_info)
+
             if ('massbank' in meta_info and 'cols' in meta_info) or ('msp' in meta_info and 'num_peaks' in meta_info):
-                print('check')
-                numlines = int(meta_info['num_peaks'])
-                linesread = 0
+
+                pnumlines = int(meta_info['num_peaks'])
+                plinesread = 0
                 peaklist = []
 
-        elif linesread < numlines:
+        elif plinesread < pnumlines:
             # =============== Extract peaks from MSP ==========================
             line = tuple(line.split())  # .split() will split on any empty space (i.e. tab and space)
             # Keep only m/z and intensity, not relative intensity
             save_line = tuple(line[0].split() + line[1].split())
-            linesread += 1
+            plinesread += 1
             peaklist.append(save_line)
 
-        elif linesread == numlines:
+        elif plinesread and plinesread == pnumlines:
             # =============== Get sample name and additional details for output =======
-            # use a unique uuid4 to keep track of processing (important for multicore)
-            #rd = str(uuid.uuid4())
             spectrac += 1
+            paramd, cmd = run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types)
 
-            # Get sample details (if possible to extract) e.g. if created as part of the msPurity pipeline)
-            # choose between getting additional details to add as columns as either all meta data from msp, just
-            # details from the record name (i.e. when using msPurity and we have the columns coded into the name) or
-            # just the spectra index (spectrac)
-            if args.meta_select_col == 'name':
-                # have additional column of just the name
-                paramd['additional_details'] = {'name': meta_info['name']}
-            elif args.meta_select_col == 'name_split':
-                # have additional columns split by "|" and then on ":" e.g. MZ:100.2 | RT:20 | xcms_grp_id:1
-                sampled = {sm.split(":")[0].strip(): sm.split(":")[1].strip() for sm in
-                               meta_info['name'].split("|")}
-            elif args.meta_select_col == 'all':
-                # have additional columns based on all the meta information extracted from the MSP
-                paramd['additional_details'] = meta_info
-            else:
-                # Just have and index of the spectra in the MSP file
-                paramd['additional_details'] = {'spectra_idx': spectrac}
-
-            paramd["SampleName"] = "{}_metfrag_result".format(spectrac)
-
-            # =============== Output peaks to txt file  ==============================
-            numlines = 0
-            paramd["PeakListPath"] = os.path.join(wd, "{}_tmpspec.txt".format(spectrac))
-            print(paramd["PeakListPath"])
-            # write spec file
-            with open(paramd["PeakListPath"], 'w') as outfile:
-                for p in peaklist:
-                    outfile.write(p[0] + "\t" + p[1] + "\n")
-
-            # =============== Update param based on MSP metadata ======================
-            # Replace param details with details from MSP if required
-            if 'precursor_type' in meta_info and meta_info['precursor_type'] in adduct_types:
-
-                nm = float(meta_info['precursor_mz']) + adduct_types[meta_info['precursor_type']]
-                paramd["PrecursorIonMode"] = int(round(adduct_types[meta_info['precursor_type']], 0))
-            else:
-
-                paramd["PrecursorIonMode"] = paramd['PrecursorIonModeDefault']
-                nm = float(meta_info['precursor_mz']) + paramd['nm_mass_diff_default']
-
-            paramd["NeutralPrecursorMass"] = nm
-
-            # =============== Create CLI cmd for metfrag ===============================
-            cmd = "metfrag"
-            for k, v in six.iteritems(paramd):
-                if not k in ['PrecursorIonModeDefault', 'nm_mass_diff_default', 'additional_details']:
-                    cmd += " {}={}".format(str(k), str(v))
             paramds[paramd["SampleName"]] = paramd
-
-            # =============== Run metfrag ==============================================
-            # Filter before process with a minimum number of MS/MS peaks
-            if linesread >= float(args.minMSMSpeaks):
-
-                if int(args.cores_top_level) > 1:
-                    cmds.append(cmd)
-                else:
-                    print(cmd)
-                    os.system(cmd)
+            cmds.append(cmd)
 
             meta_info = {}
+            pnumlines = 0
+            plinesread = 0
+
+    # end of file. Check if there is a MSP spectra to run metfrag on still
+    if plinesread and plinesread == pnumlines:
+
+        paramd, cmd = run_metfrag(meta_info, peaklist, args, wd, spectrac+1, adduct_types)
+
+        paramds[paramd["SampleName"]] = paramd
+        cmds.append(cmd)
 
 
-def work(cmds):
-    return [os.system(cmd) for cmd in cmds]
+
 
 
 # Perform multiprocessing on command line call level
@@ -371,6 +394,13 @@ for k, paramd in six.iteritems(paramds):
     additional_detail_headers = list(set(additional_detail_headers + list(paramd['additional_details'].keys())))
 
 headers = additional_detail_headers + sorted(list(set(headers)))
+
+
+# Sort files nicely
+outfiles.sort(key = lambda s: int(re.match('^.*/(\d+)_metfrag_result.csv', s).group(1)))
+
+print(outfiles)
+
 
 # merge outputs
 with open(args.result_pth, 'a') as merged_outfile:
