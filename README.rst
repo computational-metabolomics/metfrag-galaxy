@@ -12,7 +12,7 @@ Source code: https://github.com/c-ruttkies/MetFrag
 Version
 ------
 
-0.1.7
+0.1.8
 
 
 Galaxy
@@ -47,6 +47,10 @@ Developers & Contributors
 
 Changes
 -------
+Version 0.1.8:
+ - removed quotes for output columns (previously double quotes " were being added for inchikeys and scores
+   causing problems for downstream processing.
+
 Version 0.1.7:
  - Bug Fix for ID tracking
  - Bug Fix for skipping final MSP spectra if two empty lines not present
