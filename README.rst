@@ -12,7 +12,7 @@ Source code: https://github.com/c-ruttkies/MetFrag
 Version
 ------
 
-0.1.8
+2.4.2+galaxy0.1.9
 
 
 Galaxy
@@ -22,7 +22,6 @@ Galaxy
 
 TODO
 ----
-- Additional adduct options
 - Additional unit-tests
 
 
@@ -47,6 +46,14 @@ Developers & Contributors
 
 Changes
 -------
+Version 2.4.2+galaxy0.1.9
+ - Bug fix for neutral mass calculation (Introduced from 0.1.3)
+ - Additional adduct forms for negative added
+ - Version system changed to IUC style (TOOL_VERSION+GALAXY_TOOL_VERSION)
+ - Memory regex check added to stdio - should now repeat at higher memory if low memory error found
+ - Update unit-tests to use RP022611 MassBank data (Glucose)
+
+
 Version 0.1.8:
  - removed quotes for output columns (previously double quotes " were being added for inchikeys and scores
    causing problems for downstream processing.
@@ -67,7 +74,7 @@ Version 0.1.4:
  - added UNPD InCHIkey database to be used for automated testing
  - acknowledge additional contributors
 
-Vewrsion 0.1.3:
+Version 0.1.3:
  - merge with the latest PhenoMeNal develop version of the module, based on https://github.com/korseby/container-msnbase
  - merge with changes of Julien Saint-Vanne
 

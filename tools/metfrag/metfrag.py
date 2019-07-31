@@ -119,6 +119,10 @@ adduct_types = {
     '[M+2ACN+H]+': 83.06037,
     '[M-H]-': -1.007276,
     '[M+Cl]-': 34.969402,
+    '[M+HCOO]-': 44.99819,
+    '[M-H+HCOOH]-': 44.99819,  # same as above but different style of writing adduct
+    '[M+CH3COO]-': 59.01385,
+    '[M-H+CH3COOH]-': 59.01385  # same as above but different style of writing adduct
 }
 
 # function to extract the meta data using the regular expressions
@@ -263,12 +267,12 @@ def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
     # Replace param details with details from MSP if required
     if 'precursor_type' in meta_info and meta_info['precursor_type'] in adduct_types:
 
-        nm = float(meta_info['precursor_mz']) + adduct_types[meta_info['precursor_type']]
+        nm = float(meta_info['precursor_mz']) - adduct_types[meta_info['precursor_type']]
         paramd["PrecursorIonMode"] = int(round(adduct_types[meta_info['precursor_type']], 0))
     else:
 
         paramd["PrecursorIonMode"] = paramd['PrecursorIonModeDefault']
-        nm = float(meta_info['precursor_mz']) + paramd['nm_mass_diff_default']
+        nm = float(meta_info['precursor_mz']) - paramd['nm_mass_diff_default']
 
     paramd["NeutralPrecursorMass"] = nm
 
@@ -279,6 +283,7 @@ def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
             cmd += " {}={}".format(str(k), str(v))
 
     # =============== Run metfrag ==============================================
+    print(cmd)
     # Filter before process with a minimum number of MS/MS peaks
     if plinesread >= float(args.minMSMSpeaks):
 
