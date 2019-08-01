@@ -383,6 +383,10 @@ if int(args.cores_top_level) > 1:
 # outfiles = [os.path.join(wd, f) for f in glob.glob(os.path.join(wd, "*_metfrag_result.csv"))]
 outfiles = glob.glob(os.path.join(wd, "*_metfrag_result.csv"))
 
+if len(outfiles) == 0:
+    print('No results')
+    sys.exit()
+
 headers = []
 c = 0
 for fn in outfiles:
@@ -400,6 +404,7 @@ for fn in outfiles:
 
 # if no data rows (e.g. matches) then do not save an output and leave the program        
 if c == 0:
+    print('No results')
     sys.exit()
 
 additional_detail_headers = ['sample_name']

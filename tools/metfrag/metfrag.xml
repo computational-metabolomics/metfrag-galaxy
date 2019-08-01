@@ -1,4 +1,4 @@
-<tool id="metfrag" name="MetFrag" version="2.4.2+galaxy0.1.9">
+<tool id="metfrag" name="MetFrag" version="2.4.2+galaxy0.1.10">
     <description> </description>
     <requirements>
         <requirement type="package" version="2.4.2">metfrag</requirement>
@@ -129,10 +129,10 @@
                                  from the Universal Natural Products Database (http://pkuxxj.pku.edu.cn/UNPD/index.php).
                                   The list is an aggregated version of the github repository https://github.com/oolonek/ISDB/tree/master/Data/dbs."/>
 	                <when value="true">
-                        <param name="ScoreSuspectLists" type="data" format="txt" optional="False" label="Suspect list file"
-                               help="File containing a list of suspects inchikeys" />
                     </when>
                     <when value="false">
+                        <param name="ScoreSuspectLists" type="data" format="txt" optional="False" label="Suspect list file"
+                               help="File containing a list of suspects inchikeys" />
                     </when>
                 </conditional>
 
@@ -149,7 +149,7 @@
         <param name="skip_invalid_adducts" type="boolean" label="Skip invalid or undefined adduct types?"
                truevalue="--skip_invalid_adducts" falsevalue=""
                help="If no adduct type is provided within the MSP file or if the adduct type is not usable
-                     with MetFrag, set to true if these spectra should be skipped or false if the default
+                     with MetFrag, set to 'yes' if these spectra should be skipped or 'no' if the default
                      of [M+H]+ for pos data or [M-H]- for neg data should be used"/>
         <section name="PreProcessFilter" title="PreProcessing filters" expanded="False">
             <param name="UnconnectedCompoundFilter" type="boolean" checked="false" truevalue="--UnconnectedCompoundFilter"
