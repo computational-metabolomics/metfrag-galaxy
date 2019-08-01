@@ -1,7 +1,7 @@
-<tool id="metfrag" name="MetFrag" version="2.4.2+galaxy0.1.10">
+<tool id="metfrag" name="MetFrag" version="2.4.5+galaxy0.1.10">
     <description> </description>
     <requirements>
-        <requirement type="package" version="2.4.2">metfrag</requirement>
+        <requirement type="package" version="2.4.5">metfrag</requirement>
     </requirements>
     <stdio>
         <regex match="Cannot allocate memory"
