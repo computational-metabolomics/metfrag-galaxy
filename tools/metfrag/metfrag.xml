@@ -34,7 +34,14 @@
 
             --MetFragScoreTypes '$suspectlist.MetFragScoreTypes'
             --MetFragScoreWeights '$suspectlist.MetFragScoreWeights'
-            --ScoreSuspectLists '$suspectlist.ScoreSuspectLists'
+
+            #if $suspectlist.suspectselector == 'includesuspects':
+                #if $suspectlist.includesuspects_default_cond:
+                    --ScoreSuspectLists '$__tool_directory__/test-data/UNPD_DB.inchikeys.txt'
+                #else
+                    --ScoreSuspectLists '$suspectlist.includesuspects_custom_cond.ScoreSuspectLists'
+                #end if
+            #end if
 
             --meta_select_col $meta_select_col
             --minMSMSpeaks $minMSMSpeaks
@@ -52,6 +59,7 @@
             --FilterExcludedElements '$PreProcessFilter.FilterExcludedElements'
             --FilterIncludedExclusiveElements '$PreProcessFilter.FilterIncludedExclusiveElements'
 
+            $skip_invalid_adducts
             --score_thrshld $PostProcessFilter.score_thrshld
             --pctexplpeak_thrshld $PostProcessFilter.pctexplpeak_thrshld
 
@@ -114,20 +122,35 @@
                 <option value="excludesuspects" selected="True">Do not include suspect list</option>
             </param>
             <when value="includesuspects">
-                <param name="ScoreSuspectLists" type="data" format="txt" optional="False" label="Suspect list file" help="File containing a list of suspects" />
+                <conditional name="includesuspects_default_cond">
+                    <param name="includesuspects_default_bool" type="boolean" label="Use default list of suspect compounds?"
+                           help="Either provide a file containing a list of suspect compounds or a default file
+                                 of of an aggregated list of in silico predicted MS/MS spectra of natural products
+                                 from the Universal Natural Products Database (http://pkuxxj.pku.edu.cn/UNPD/index.php).
+                                  The list is an aggregated version of the github repository https://github.com/oolonek/ISDB/tree/master/Data/dbs."/>
+	                <when value="true">
+                        <param name="ScoreSuspectLists" type="data" format="txt" optional="False" label="Suspect list file"
+                               help="File containing a list of suspects inchikeys" />
+                    </when>
+                    <when value="false">
+                    </when>
+                </conditional>
+
                 <param name="MetFragScoreTypes" type="text" value="FragmenterScore,OfflineMetFusionScore,SuspectListScore" optional="False" label="MetFrag Score Types" help="The type of scores MetFrag is calculating. Please do not change the value unless you know what you are doing." />
                 <param name="MetFragScoreWeights" type="text" value="0.4,0.6,1.0" optional="False" label="MetFrag Score Weights" help="The weights of the different score types, separated with a comma and without whitespaces. 1.0 means 100 percent." />
             </when>
             <when value="excludesuspects">
-                <param name="ScoreSuspectLists" type="select" optional="False" label="Suspect list file" help="File containing a list of suspects">
-                    <option value="None" selected="True">No suspect list file</option>
-                </param>
                 <param name="MetFragScoreTypes" type="text" value="FragmenterScore,OfflineMetFusionScore" optional="False" label="MetFrag Score Types" help="The type of scores MetFrag is calculating. Please do not change the value unless you know what you are doing." />
                 <param name="MetFragScoreWeights" type="text" value="1.0,1.0" optional="False" label="MetFrag Score Weights" help="The weights of the different score types, separated with a comma and without whitespaces. 1.0 means 100 percent." />
             </when>
         </conditional>
 
         <param name="minMSMSpeaks" type="integer" label="Minimum number of MS/MS peaks" value="0"/>
+        <param name="skip_invalid_adducts" type="boolean" label="Skip invalid or undefined adduct types?"
+               truevalue="--skip_invalid_adducts" falsevalue=""
+               help="If no adduct type is provided within the MSP file or if the adduct type is not usable
+                     with MetFrag, set to true if these spectra should be skipped or false if the default
+                     of [M+H]+ for pos data or [M-H]- for neg data should be used"/>
         <section name="PreProcessFilter" title="PreProcessing filters" expanded="False">
             <param name="UnconnectedCompoundFilter" type="boolean" checked="false" truevalue="--UnconnectedCompoundFilter"
                    falsevalue="" label="filter non-connected compounds (e.g. salts)" help=""/>
@@ -151,7 +174,7 @@
 
         <section name="PostProcessFilter" title="PostProcessing filters" expanded="False">
             <param name="score_thrshld" type="float" label="Threshold for score after MetFrag search" max="1" min="0" value="0"/>
-            <param name="pctexplpeak_thrshld" type="integer" label="Minimum percentage of explain peaks" max="100" min="0" value="0"/>
+            <param name="pctexplpeak_thrshld" type="float" label="Minimum percentage of explain peaks" max="100" min="0" value="0"/>
         </section>
 
     </inputs>
@@ -160,6 +183,7 @@
     </outputs>
     <tests>
         <test>
+            <!-- Test "massbank" style data format  -->
             <param name="input" value="massbank_format.txt"/>
             <param name="schema" value="massbank"/>
             <param name="MetFragDatabaseType" value="LocalCSV"/>
@@ -167,6 +191,7 @@
             <output name="results" file="metfrag_massbank.tabular"/>
         </test>
         <test>
+            <!-- Test "generic" style data format  -->
             <param name="input" value="generic_format.msp"/>
             <param name="schema" value="msp"/>
             <param name="MetFragDatabaseType" value="LocalCSV"/>
@@ -174,31 +199,54 @@
             <output name="results" file="metfrag_msp.tabular"/>
         </test>
         <test>
+            <!-- Test PubChem API with "winter" dataset -->
             <param name="input" value="winter_pos.msp"/>
             <param name="PostProcessFilter|score_thrshld" value="0.9"/>
             <param name="MetFragDatabaseType" value="PubChem"/>
             <output name="results" file="winter_pos.tabular"/>
         </test>
         <test>
+            <!-- Test actual MassBank data for Glucose -->
             <param name="input" value="RP022611.txt"/>
+            <param name="MetFragDatabaseType" value="LocalCSV"/>
             <param name="LocalDatabasePath" value="demo_db.csv"/>
             <output name="results" file="RP022611.tabular"/>
         </test>
         <test>
+            <!-- Test actual MassBank data for Glucose (all metadata columns in output-->
             <param name="input" value="RP022611.txt"/>
             <param name="schema" value="massbank"/>
+            <param name="MetFragDatabaseType" value="LocalCSV"/>
             <param name="LocalDatabasePath" value="demo_db.csv"/>
             <param name="meta_select_col" value="all"/>
             <output name="results" file="RP022611_all_col.tabular"/>
         </test>
         <test>
+            <!-- Test actual MassBank data for Glucose (include suspect list - default)-->
             <param name="input" value="RP022611.txt"/>
             <param name="schema" value="massbank"/>
             <param name="suspectlist|suspectselector" value="includesuspects"/>
-            <param name="suspectlist|ScoreSuspectLists" value="UNPD_DB.inchikeys.txt"/>
+            <param name="suspectlist|includesuspects_default_cond|includesuspects_default_bool" value="true"/>
             <param name="suspectlist|MetFragScoreTypes" value="FragmenterScore,OfflineMetFusionScore,SuspectListScore"/>
             <param name="suspectlist|MetFragScoreWeights" value="0.4,0.6,1.0"/>
-            <output name="results" file="RP022611_suspect.txt"/>
+            <output name="results" file="RP022611_suspect_default.txt"/>
+        </test>
+        <test>
+            <!-- Test actual MassBank data for Glucose (include suspect list - custom)-->
+            <param name="input" value="RP022611.txt"/>
+            <param name="schema" value="massbank"/>
+            <param name="suspectlist|suspectselector" value="includesuspects"/>
+            <param name="suspectlist|includesuspects_default_cond|includesuspects_default_bool" value="false"/>
+            <param name="suspectlist|includesuspects_default_cond|ScoreSuspectLists" value="UNPD_DB.inchikeys.txt"/>
+            <param name="suspectlist|MetFragScoreTypes" value="FragmenterScore,OfflineMetFusionScore,SuspectListScore"/>
+            <param name="suspectlist|MetFragScoreWeights" value="0.4,0.6,1.0"/>
+            <output name="results" file="RP022611_suspect_default.txt"/>
+        </test>
+        <test>
+            <!-- Test actual MassBank data for Glucose (include suspect list - custom)-->
+            <param name="input" value="invalid_adduct.msp"/>
+            <param name="skip_invalid_adducts" value="true"/>
+            <output name="results" file="invalid_adduct_result.txt"/>
         </test>
     </tests>
     <help>

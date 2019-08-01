@@ -50,13 +50,19 @@ parser.add_argument('--schema')
 parser.add_argument('--cores_top_level', default=1)
 parser.add_argument('--chunks', default=1)
 parser.add_argument('--meta_select_col', default='name')
+parser.add_argument('--skip_invalid_adducts',  action='store_true')
 
 parser.add_argument('--ScoreSuspectLists', default='')
 parser.add_argument('--MetFragScoreTypes', default="FragmenterScore,OfflineMetFusionScore")
 parser.add_argument('--MetFragScoreWeights', default="1.0,1.0")
 
+
 args = parser.parse_args()
 print(args)
+
+if os.stat(args.input_pth).st_size == 0:
+    exit('Input file empty')
+
 
 # Create temporary working directory
 if args.temp_dir:
@@ -266,13 +272,14 @@ def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
     # =============== Update param based on MSP metadata ======================
     # Replace param details with details from MSP if required
     if 'precursor_type' in meta_info and meta_info['precursor_type'] in adduct_types:
-
         nm = float(meta_info['precursor_mz']) - adduct_types[meta_info['precursor_type']]
         paramd["PrecursorIonMode"] = int(round(adduct_types[meta_info['precursor_type']], 0))
-    else:
-
+    elif not args.skip_invalid_adducts:
         paramd["PrecursorIonMode"] = paramd['PrecursorIonModeDefault']
         nm = float(meta_info['precursor_mz']) - paramd['nm_mass_diff_default']
+    else:
+        print('Skipping {}'.format(paramd["SampleName"]))
+        return '', ''
 
     paramd["NeutralPrecursorMass"] = nm
 
@@ -341,8 +348,9 @@ with open(args.input_pth, "r") as infile:
             spectrac += 1
             paramd, cmd = run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types)
 
-            paramds[paramd["SampleName"]] = paramd
-            cmds.append(cmd)
+            if paramd:
+                paramds[paramd["SampleName"]] = paramd
+                cmds.append(cmd)
 
             meta_info = {}
             pnumlines = 0
@@ -353,9 +361,9 @@ with open(args.input_pth, "r") as infile:
 
         paramd, cmd = run_metfrag(meta_info, peaklist, args, wd, spectrac+1, adduct_types)
 
-        paramds[paramd["SampleName"]] = paramd
-        cmds.append(cmd)
-
+        if paramd:
+            paramds[paramd["SampleName"]] = paramd
+            cmds.append(cmd)
 
 
 

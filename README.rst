@@ -12,7 +12,7 @@ Source code: https://github.com/c-ruttkies/MetFrag
 Version
 ------
 
-2.4.2+galaxy0.1.9
+v2.4.2+galaxy0.1.10
 
 
 Galaxy
@@ -46,6 +46,15 @@ Developers & Contributors
 
 Changes
 -------
+
+Version 2.4.2+galaxy0.1.10
+- Add default option for suspectlist (so user does not need to upload the GNPS list)
+- Changed "Minimum percentage of explain peaks" argument to float
+- Added "skip invalid adducts" option
+- Updated unit-tests
+- Check for empty input file added
+
+
 Version 2.4.2+galaxy0.1.9
  - Bug fix for neutral mass calculation (Introduced from 0.1.3)
  - Additional adduct forms for negative added
