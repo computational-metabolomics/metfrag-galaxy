@@ -61,7 +61,8 @@ args = parser.parse_args()
 print(args)
 
 if os.stat(args.input_pth).st_size == 0:
-    exit('Input file empty')
+    print('Input file empty')
+    exit()
 
 
 # Create temporary working directory
