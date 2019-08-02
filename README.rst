@@ -12,7 +12,9 @@ Source code: https://github.com/c-ruttkies/MetFrag
 Version
 ------
 
-v2.4.2+galaxy0.1.10
+v2.4.5+galaxy0.1.11
+
+(Using `MetFrag v2.4.5 <https://anaconda.org/bioconda/metfrag>`_)
 
 
 Galaxy
@@ -46,6 +48,11 @@ Developers & Contributors
 
 Changes
 -------
+Version 2.4.5+galaxy0.1.11
+- Upodate to MetFrag version 2.4.5
+- Boolean for default suspect list fixed
+- Check for no results added
+- Doc updates
 
 Version 2.4.2+galaxy0.1.10
 - Add default option for suspectlist (so user does not need to upload the GNPS list)
