@@ -48,8 +48,11 @@ Developers & Contributors
 
 Changes
 -------
+Version 2.4.5+galaxy0.1.12
+- Allow metchem database to be accessed with user defined database name, user and password
+
 Version 2.4.5+galaxy0.1.11
-- Upodate to MetFrag version 2.4.5
+- Update to MetFrag version 2.4.5
 - Boolean for default suspect list fixed
 - Check for no results added
 - Doc updates
