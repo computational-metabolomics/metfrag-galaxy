@@ -28,6 +28,10 @@ parser.add_argument('--minMSMSpeaks', default=1)
 parser.add_argument('--MetFragDatabaseType', default='PubChem')
 parser.add_argument('--LocalDatabasePath', default='')
 parser.add_argument('--LocalMetChemDatabaseServerIp', default='')
+parser.add_argument('--LocalMetChemDatabase', default='')
+parser.add_argument('--LocalMetChemDatabasePortNumber', default='')
+parser.add_argument('--LocalMetChemDatabaseUser', default='')
+parser.add_argument('--LocalMetChemDatabasePassword', default='')
 
 parser.add_argument('--DatabaseSearchRelativeMassDeviation', default=5)
 parser.add_argument('--FragmentPeakMatchRelativeMassDeviation', default=10)
@@ -154,11 +158,11 @@ def init_paramd(args):
     if args.MetFragDatabaseType == "LocalCSV":
         paramd["LocalDatabasePath"] = args.LocalDatabasePath
     elif args.MetFragDatabaseType == "MetChem":
-        paramd["LocalMetChemDatabase"] = "metchem"
-        paramd["LocalMetChemDatabasePortNumber"] = 5432
+        paramd["LocalMetChemDatabase"] = args.LocalMetChemDatabase
+        paramd["LocalMetChemDatabasePortNumber"] = args.LocalMetChemDatabasePortNumber
         paramd["LocalMetChemDatabaseServerIp"] = args.LocalMetChemDatabaseServerIp
-        paramd["LocalMetChemDatabaseUser"] = "metchemro"
-        paramd["LocalMetChemDatabasePassword"] = "metchemro"
+        paramd["LocalMetChemDatabaseUser"] = args.LocalMetChemDatabaseUser
+        paramd["LocalMetChemDatabasePassword"] = args.LocalMetChemDatabasePassword
 
     paramd["FragmentPeakMatchAbsoluteMassDeviation"] = args.FragmentPeakMatchAbsoluteMassDeviation
     paramd["FragmentPeakMatchRelativeMassDeviation"] = args.FragmentPeakMatchRelativeMassDeviation

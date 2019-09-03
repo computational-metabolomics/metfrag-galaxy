@@ -1,4 +1,4 @@
-<tool id="metfrag" name="MetFrag" version="2.4.5+galaxy0.1.11">
+<tool id="metfrag" name="MetFrag" version="2.4.5+galaxy0.1.12">
     <description> </description>
     <requirements>
         <requirement type="package" version="2.4.5">metfrag</requirement>
@@ -25,6 +25,10 @@
                 --LocalDatabasePath '$db_select.LocalDatabasePath'
             #elif  $db_select.MetFragDatabaseType == "MetChem":
                 --LocalMetChemDatabaseServerIp '$db_select.LocalMetChemDatabaseServerIp'
+                --LocalMetChemDatabase '$db_select.LocalMetChemDatabase'
+                --LocalMetChemDatabasePortNumber '$db_select.LocalMetChemDatabasePortNumber'
+                --LocalMetChemDatabaseUser '$db_select.LocalMetChemDatabaseUser'
+                --LocalMetChemDatabasePassword '$db_select.LocalMetChemDatabasePassword'
             #end if
 
             --DatabaseSearchRelativeMassDeviation $DatabaseSearchRelativeMassDeviation
@@ -63,6 +67,10 @@
             --score_thrshld $PostProcessFilter.score_thrshld
             --pctexplpeak_thrshld $PostProcessFilter.pctexplpeak_thrshld
 
+
+
+
+
     ]]></command>
     <inputs>
 
@@ -78,6 +86,16 @@
             <when value="MetChem">
                 <param name="LocalMetChemDatabaseServerIp" type="text" label="MetChem URL"
                        argument="--LocalMetChemDatabaseServerIp" />
+                <param name="LocalMetChemDatabase" type="text" label="MetChem database name" value="metchem"
+                       argument="--LocalMetChemDatabase" />
+                <param name="LocalMetChemDatabasePortNumber" type="text" label="MetChem port number"
+                       argument="--LocalMetChemDatabasePortNumber" />
+                <param name="LocalMetChemDatabaseUser" type="text" label="MetChem username" value="metchem"
+                       argument="--LocalMetChemDatabaseUser" />
+                <param name="LocalMetChemDatabasePassword" type="text" label="MetChem password (use with caution)"
+                       help="Use with care - passwords will be made public" value="metchem"
+                       argument="--LocalMetChemDatabasePassword" />
+
             </when>
             <when value="LocalCSV">
                 <param name="LocalDatabasePath"  type="data" format="csv" label="Local database of compounds (CSV format)" argument="--LocalDatabasePath"/>

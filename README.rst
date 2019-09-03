@@ -12,7 +12,7 @@ Source code: https://github.com/c-ruttkies/MetFrag
 Version
 ------
 
-v2.4.5+galaxy0.1.11
+v2.4.5+galaxy0.1.12
 
 (Using `MetFrag v2.4.5 <https://anaconda.org/bioconda/metfrag>`_)
 
