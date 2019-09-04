@@ -49,7 +49,7 @@ Developers & Contributors
 Changes
 -------
 Version 2.4.5+galaxy0.1.12
-- Allow metchem database to be accessed with user defined database name, user and password
+- Allow metchem database to be configured via a config.ini file (allows more flexibility)
 
 Version 2.4.5+galaxy0.1.11
 - Update to MetFrag version 2.4.5
