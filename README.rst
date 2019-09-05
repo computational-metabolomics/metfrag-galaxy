@@ -48,22 +48,22 @@ Developers & Contributors
 
 Changes
 -------
+
 Version 2.4.5+galaxy0.1.12
-- Allow metchem database to be configured via a config.ini file (allows more flexibility)
+ - Allow metchem database to be configured via a config.ini file (allows more flexibility)
 
 Version 2.4.5+galaxy0.1.11
-- Update to MetFrag version 2.4.5
-- Boolean for default suspect list fixed
-- Check for no results added
-- Doc updates
+ - Update to MetFrag version 2.4.5
+ - Boolean for default suspect list fixed
+ - Check for no results added
+ - Doc updates
 
 Version 2.4.2+galaxy0.1.10
-- Add default option for suspectlist (so user does not need to upload the GNPS list)
-- Changed "Minimum percentage of explain peaks" argument to float
-- Added "skip invalid adducts" option
-- Updated unit-tests
-- Check for empty input file added
-
+ - Add default option for suspectlist (so user does not need to upload the GNPS list)
+ - Changed "Minimum percentage of explain peaks" argument to float
+ - Added "skip invalid adducts" option
+ - Updated unit-tests
+ - Check for empty input file added
 
 Version 2.4.2+galaxy0.1.9
  - Bug fix for neutral mass calculation (Introduced from 0.1.3)
@@ -71,7 +71,6 @@ Version 2.4.2+galaxy0.1.9
  - Version system changed to IUC style (TOOL_VERSION+GALAXY_TOOL_VERSION)
  - Memory regex check added to stdio - should now repeat at higher memory if low memory error found
  - Update unit-tests to use RP022611 MassBank data (Glucose)
-
 
 Version 0.1.8:
  - removed quotes for output columns (previously double quotes " were being added for inchikeys and scores
