@@ -1,4 +1,4 @@
-<tool id="metfrag" name="MetFrag" version="2.4.5+galaxy0.1.12">
+<tool id="metfrag" name="MetFrag" version="2.4.5+galaxy0.1.13">
     <description> </description>
     <requirements>
         <requirement type="package" version="2.4.5">metfrag</requirement>
@@ -151,7 +151,7 @@
 
         <param name="minMSMSpeaks" type="integer" label="Minimum number of MS/MS peaks" value="0"/>
         <param name="skip_invalid_adducts" type="boolean" label="Skip invalid or undefined adduct types?"
-               truevalue="--skip_invalid_adducts" falsevalue=""
+               truevalue="--skip_invalid_adducts" falsevalue="" checked="true"
                help="If no adduct type is provided within the MSP file or if the adduct type is not usable
                      with MetFrag, set to 'yes' if these spectra should be skipped or 'no' if the default
                      of [M+H]+ for pos data or [M-H]- for neg data should be used"/>

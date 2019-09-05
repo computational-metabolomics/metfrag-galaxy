@@ -117,7 +117,7 @@ elif args.schema == 'auto':
     meta_regex['num_peaks'].extend(regex_msp['num_peaks'])
     meta_regex['msp'] = regex_msp['msp']
 
-    print(meta_regex)
+
 
 adduct_types = {
     '[M+H]+': 1.007276,
@@ -135,6 +135,7 @@ adduct_types = {
     '[M+CH3COO]-': 59.01385,
     '[M-H+CH3COOH]-': 59.01385  # same as above but different style of writing adduct
 }
+inv_adduct_types = {int(round(v, 0)): k for k, v in adduct_types.iteritems()}
 
 # function to extract the meta data using the regular expressions
 def parse_meta(meta_regex, meta_info={}):
@@ -295,7 +296,7 @@ def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
             cmd += " {}={}".format(str(k), str(v))
 
     # =============== Run metfrag ==============================================
-    print(cmd)
+    #print(cmd)
     # Filter before process with a minimum number of MS/MS peaks
     if plinesread >= float(args.minMSMSpeaks):
 
@@ -465,5 +466,9 @@ with open(args.result_pth, 'a') as merged_outfile:
                     ad = paramds[bfn]['additional_details']
                     line.update(ad)
                     line['sample_name'] = paramds[bfn]['SampleName']
+
+                    # make sure we have the actual adduct used (this can be different if skip_invalid_adducts is set
+                    # to False and an invalid adduct is used - forcing either M+H or M-H to be used
+                    line['adduct'] = inv_adduct_types[paramds[bfn]['PrecursorIonMode']]
 
                     dwriter.writerow(line)
