@@ -5,8 +5,7 @@ import os
 import sys
 import six
 import re
-import random
-import string
+import ConfigParser
 import shutil
 import glob
 import tempfile
@@ -59,6 +58,11 @@ parser.add_argument('--MetFragScoreWeights', default="1.0,1.0")
 
 args = parser.parse_args()
 print(args)
+
+
+config = ConfigParser.ConfigParser()
+config.read(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.ini'))
+
 
 if os.stat(args.input_pth).st_size == 0:
     print('Input file empty')
@@ -154,11 +158,11 @@ def init_paramd(args):
     if args.MetFragDatabaseType == "LocalCSV":
         paramd["LocalDatabasePath"] = args.LocalDatabasePath
     elif args.MetFragDatabaseType == "MetChem":
-        paramd["LocalMetChemDatabase"] = "metchem"
-        paramd["LocalMetChemDatabasePortNumber"] = 5432
+        paramd["LocalMetChemDatabase"] = config.get('MetChem', 'LocalMetChemDatabase')
+        paramd["LocalMetChemDatabasePortNumber"] = config.get('MetChem', 'LocalMetChemDatabasePortNumber')
         paramd["LocalMetChemDatabaseServerIp"] = args.LocalMetChemDatabaseServerIp
-        paramd["LocalMetChemDatabaseUser"] = "metchemro"
-        paramd["LocalMetChemDatabasePassword"] = "metchemro"
+        paramd["LocalMetChemDatabaseUser"] = config.get('MetChem', 'LocalMetChemDatabaseUser')
+        paramd["LocalMetChemDatabasePassword"] = config.get('MetChem', 'LocalMetChemDatabasePassword')
 
     paramd["FragmentPeakMatchAbsoluteMassDeviation"] = args.FragmentPeakMatchAbsoluteMassDeviation
     paramd["FragmentPeakMatchRelativeMassDeviation"] = args.FragmentPeakMatchRelativeMassDeviation

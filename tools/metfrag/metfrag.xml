@@ -1,4 +1,4 @@
-<tool id="metfrag" name="MetFrag" version="2.4.5+galaxy0.1.11">
+<tool id="metfrag" name="MetFrag" version="2.4.5+galaxy0.1.12">
     <description> </description>
     <requirements>
         <requirement type="package" version="2.4.5">metfrag</requirement>
@@ -62,6 +62,10 @@
             $skip_invalid_adducts
             --score_thrshld $PostProcessFilter.score_thrshld
             --pctexplpeak_thrshld $PostProcessFilter.pctexplpeak_thrshld
+
+
+
+
 
     ]]></command>
     <inputs>
