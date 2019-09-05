@@ -265,6 +265,7 @@ def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
         # Just have and index of the spectra in the MSP file
         paramd['additional_details'] = {'spectra_idx': spectrac}
 
+
     paramd["SampleName"] = "{}_metfrag_result".format(spectrac)
 
     # =============== Output peaks to txt file  ==============================
@@ -278,15 +279,18 @@ def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
     # =============== Update param based on MSP metadata ======================
     # Replace param details with details from MSP if required
     if 'precursor_type' in meta_info and meta_info['precursor_type'] in adduct_types:
+        adduct = meta_info['precursor_type']
         nm = float(meta_info['precursor_mz']) - adduct_types[meta_info['precursor_type']]
         paramd["PrecursorIonMode"] = int(round(adduct_types[meta_info['precursor_type']], 0))
     elif not args.skip_invalid_adducts:
+        adduct = inv_adduct_types[paramd['PrecursorIonModeDefault']]
         paramd["PrecursorIonMode"] = paramd['PrecursorIonModeDefault']
         nm = float(meta_info['precursor_mz']) - paramd['nm_mass_diff_default']
     else:
         print('Skipping {}'.format(paramd["SampleName"]))
         return '', ''
 
+    paramd['additional_details']['adduct'] = adduct
     paramd["NeutralPrecursorMass"] = nm
 
     # =============== Create CLI cmd for metfrag ===============================
@@ -302,6 +306,8 @@ def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
 
         if int(args.cores_top_level) == 1:
             os.system(cmd)
+
+
 
     return paramd, cmd
 
@@ -463,12 +469,11 @@ with open(args.result_pth, 'a') as merged_outfile:
                 if bewrite:
                     bfn = os.path.basename(fn)
                     bfn = bfn.replace(".csv", "")
+                    line['sample_name'] = paramds[bfn]['SampleName']
                     ad = paramds[bfn]['additional_details']
                     line.update(ad)
-                    line['sample_name'] = paramds[bfn]['SampleName']
 
-                    # make sure we have the actual adduct used (this can be different if skip_invalid_adducts is set
-                    # to False and an invalid adduct is used - forcing either M+H or M-H to be used
-                    line['adduct'] = inv_adduct_types[paramds[bfn]['PrecursorIonMode']]
+
+
 
                     dwriter.writerow(line)

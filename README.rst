@@ -49,7 +49,7 @@ Developers & Contributors
 Changes
 -------
 Version 2.4.5+galaxy0.1.13
- - Improved reporting of invalid adducts
+ - Improved reporting of adducts
  - Removed print output of settings that might reveal sensitive details regarding the database
 
 Version 2.4.5+galaxy0.1.12
