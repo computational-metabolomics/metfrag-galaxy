@@ -12,7 +12,7 @@ Source code: https://github.com/c-ruttkies/MetFrag
 Version
 ------
 
-v2.4.5+galaxy0.1.13
+v2.4.5+galaxy0.1.13 (Galaxy test-toolshed revision 8:9a3019c609d9 - 2019-09-13)
 
 (Using `MetFrag v2.4.5 <https://anaconda.org/bioconda/metfrag>`_)
 
@@ -20,11 +20,6 @@ v2.4.5+galaxy0.1.13
 Galaxy
 ------
 `Galaxy <https://galaxyproject.org>`_ is an open, web-based platform for data intensive biomedical research. Whether on the free public server or your own instance, you can perform, reproduce, and share complete analyses. 
-
-
-TODO
-----
-- Additional unit-tests
 
 
 
@@ -49,20 +44,24 @@ Developers & Contributors
 Changes
 -------
 Version 2.4.5+galaxy0.1.13
+ - Submitted to test toolshed (8:9a3019c609d9)
  - Improved reporting of adducts
  - Removed print output of settings that might reveal sensitive details regarding the database
  - Added missing inchikey column to metchem output
 
 Version 2.4.5+galaxy0.1.12
+ - Submitted to test toolshed (7:0b3816a7a14b)
  - Allow metchem database to be configured via a config.ini file (allows more flexibility)
 
 Version 2.4.5+galaxy0.1.11
+ - Submitted to test toolshed (6:ceb9bd68f6bc)
  - Update to MetFrag version 2.4.5
  - Boolean for default suspect list fixed
  - Check for no results added
  - Doc updates
 
 Version 2.4.2+galaxy0.1.10
+ - Submitted to test toolshed (5:c53ed894d736)
  - Add default option for suspectlist (so user does not need to upload the GNPS list)
  - Changed "Minimum percentage of explain peaks" argument to float
  - Added "skip invalid adducts" option
@@ -70,6 +69,7 @@ Version 2.4.2+galaxy0.1.10
  - Check for empty input file added
 
 Version 2.4.2+galaxy0.1.9
+ - Submitted to test toolshed (4:eb581a101672)
  - Bug fix for neutral mass calculation (Introduced from 0.1.3)
  - Additional adduct forms for negative added
  - Version system changed to IUC style (TOOL_VERSION+GALAXY_TOOL_VERSION)
