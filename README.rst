@@ -12,7 +12,7 @@ Source code: https://github.com/c-ruttkies/MetFrag
 Version
 ------
 
-v2.4.5+galaxy0.1.12
+v2.4.5+galaxy0.1.13
 
 (Using `MetFrag v2.4.5 <https://anaconda.org/bioconda/metfrag>`_)
 
@@ -48,6 +48,10 @@ Developers & Contributors
 
 Changes
 -------
+Version 2.4.5+galaxy0.1.13
+ - Improved reporting of adducts
+ - Removed print output of settings that might reveal sensitive details regarding the database
+ - Added missing inchikey column to metchem output
 
 Version 2.4.5+galaxy0.1.12
  - Allow metchem database to be configured via a config.ini file (allows more flexibility)

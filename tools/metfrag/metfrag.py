@@ -117,7 +117,7 @@ elif args.schema == 'auto':
     meta_regex['num_peaks'].extend(regex_msp['num_peaks'])
     meta_regex['msp'] = regex_msp['msp']
 
-    print(meta_regex)
+
 
 adduct_types = {
     '[M+H]+': 1.007276,
@@ -135,6 +135,7 @@ adduct_types = {
     '[M+CH3COO]-': 59.01385,
     '[M-H+CH3COOH]-': 59.01385  # same as above but different style of writing adduct
 }
+inv_adduct_types = {int(round(v, 0)): k for k, v in adduct_types.iteritems()}
 
 # function to extract the meta data using the regular expressions
 def parse_meta(meta_regex, meta_info={}):
@@ -264,6 +265,7 @@ def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
         # Just have and index of the spectra in the MSP file
         paramd['additional_details'] = {'spectra_idx': spectrac}
 
+
     paramd["SampleName"] = "{}_metfrag_result".format(spectrac)
 
     # =============== Output peaks to txt file  ==============================
@@ -277,15 +279,18 @@ def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
     # =============== Update param based on MSP metadata ======================
     # Replace param details with details from MSP if required
     if 'precursor_type' in meta_info and meta_info['precursor_type'] in adduct_types:
+        adduct = meta_info['precursor_type']
         nm = float(meta_info['precursor_mz']) - adduct_types[meta_info['precursor_type']]
         paramd["PrecursorIonMode"] = int(round(adduct_types[meta_info['precursor_type']], 0))
     elif not args.skip_invalid_adducts:
+        adduct = inv_adduct_types[int(paramd['PrecursorIonModeDefault'])]
         paramd["PrecursorIonMode"] = paramd['PrecursorIonModeDefault']
         nm = float(meta_info['precursor_mz']) - paramd['nm_mass_diff_default']
     else:
         print('Skipping {}'.format(paramd["SampleName"]))
         return '', ''
 
+    paramd['additional_details']['adduct'] = adduct
     paramd["NeutralPrecursorMass"] = nm
 
     # =============== Create CLI cmd for metfrag ===============================
@@ -295,12 +300,14 @@ def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
             cmd += " {}={}".format(str(k), str(v))
 
     # =============== Run metfrag ==============================================
-    print(cmd)
+    #print(cmd)
     # Filter before process with a minimum number of MS/MS peaks
     if plinesread >= float(args.minMSMSpeaks):
 
         if int(args.cores_top_level) == 1:
             os.system(cmd)
+
+
 
     return paramd, cmd
 
@@ -416,7 +423,12 @@ additional_detail_headers = ['sample_name']
 for k, paramd in six.iteritems(paramds):
     additional_detail_headers = list(set(additional_detail_headers + list(paramd['additional_details'].keys())))
 
+# add inchikey if not already present (missing in metchem output)
+if 'InChIKey' not in headers:
+    headers.append('InChIKey')
+
 headers = additional_detail_headers + sorted(list(set(headers)))
+
 
 
 # Sort files nicely
@@ -462,8 +474,13 @@ with open(args.result_pth, 'a') as merged_outfile:
                 if bewrite:
                     bfn = os.path.basename(fn)
                     bfn = bfn.replace(".csv", "")
-                    ad = paramds[bfn]['additional_details']
-                    line.update(ad)
                     line['sample_name'] = paramds[bfn]['SampleName']
+                    ad = paramds[bfn]['additional_details']
 
+                    if  args.MetFragDatabaseType == "MetChem":
+                        # for some reason the metchem database option does not report the full inchikey (at least
+                        # in the Bham setup. This ensures we always get the fully inchikey
+                        line['InChIKey'] = '{}-{}-{}'.format(line['InChIKey1'], line['InChIKey2'], line['InChIKey3'])
+
+                    line.update(ad)
                     dwriter.writerow(line)
