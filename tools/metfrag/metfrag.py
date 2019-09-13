@@ -283,7 +283,7 @@ def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
         nm = float(meta_info['precursor_mz']) - adduct_types[meta_info['precursor_type']]
         paramd["PrecursorIonMode"] = int(round(adduct_types[meta_info['precursor_type']], 0))
     elif not args.skip_invalid_adducts:
-        adduct = inv_adduct_types[paramd['PrecursorIonModeDefault']]
+        adduct = inv_adduct_types[int(paramd['PrecursorIonModeDefault'])]
         paramd["PrecursorIonMode"] = paramd['PrecursorIonModeDefault']
         nm = float(meta_info['precursor_mz']) - paramd['nm_mass_diff_default']
     else:
@@ -423,7 +423,12 @@ additional_detail_headers = ['sample_name']
 for k, paramd in six.iteritems(paramds):
     additional_detail_headers = list(set(additional_detail_headers + list(paramd['additional_details'].keys())))
 
+# add inchikey if not already present (missing in metchem output)
+if 'InChIKey' not in headers:
+    headers.append('InChIKey')
+
 headers = additional_detail_headers + sorted(list(set(headers)))
+
 
 
 # Sort files nicely
@@ -471,9 +476,11 @@ with open(args.result_pth, 'a') as merged_outfile:
                     bfn = bfn.replace(".csv", "")
                     line['sample_name'] = paramds[bfn]['SampleName']
                     ad = paramds[bfn]['additional_details']
+
+                    if  args.MetFragDatabaseType == "MetChem":
+                        # for some reason the metchem database option does not report the full inchikey (at least
+                        # in the Bham setup. This ensures we always get the fully inchikey
+                        line['InChIKey'] = '{}-{}-{}'.format(line['InChIKey1'], line['InChIKey2'], line['InChIKey3'])
+
                     line.update(ad)
-
-
-
-
                     dwriter.writerow(line)
