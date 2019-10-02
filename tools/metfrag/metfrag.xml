@@ -1,5 +1,5 @@
-<tool id="metfrag" name="MetFrag" version="2.4.5+galaxy0.1.13">
-    <description> </description>
+<tool id="metfrag" name="MetFrag" version="2.4.5+galaxy1.0.0">
+    <description> in silico fragmentor that can be used to annotate fragmentation spectra </description>
     <requirements>
         <requirement type="package" version="2.4.5">metfrag</requirement>
     </requirements>
