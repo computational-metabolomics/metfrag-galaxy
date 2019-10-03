@@ -1,0 +1,20 @@
+<macros>
+    <xml name="text-alphanumeric-regex-validator">
+        <validator type="regex" message="Value may include alphanumeric characters">[A-Za-z0-9]+</validator>
+    </xml>
+    <xml name="text-alphanumeric-comma-regex-validator">
+        <validator type="regex" message="Value may include alphanumeric characters and commas">[A-Za-z0-9,]+</validator>
+    </xml>
+    <xml name="metfrag_scoring" token_fragmenterscore='True' token_offlinemetfusionscore='True'
+         token_suspectlistscore="True" token_weights="0.4,0.6,1.0">
+        <param argument="--MetFragScoreTypes" type="select" multiple="true" label="MetFrag Score Types"
+                       help="The type of scores MetFrag is calculating" >
+           <option value="FragmenterScore" selected="@FRAGMENTERSCORE@">FragmenterScore</option>
+           <option value="OfflineMetFusionScore" selected="@OFFLINEMETFUSIONSCORE@">OfflineMetFusionScore</option>
+           <option value="SuspectListScore" selected="@SUSPECTLISTSCORE@">SuspectListScore</option>
+        </param>
+        <param name="MetFragScoreWeights" type="text" value="@WEIGHTS@" label="MetFrag Score Weights"
+                       help="The weights of the different score types, separated with a comma and without
+                       whitespaces. 1.0 means 100 percent." />
+    </xml>
+</macros>
