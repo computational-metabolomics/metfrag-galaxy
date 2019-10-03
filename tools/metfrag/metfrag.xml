@@ -385,10 +385,7 @@ performed on the potential compounds prior to predicting the in silico spectra
 Output
 -------
 
-|
-| These columns are derived from any metadata in the MSP input file (additional columns can included if
-        they are recorded in the MSP file)
-|
+These columns are derived from any metadata in the MSP input file (additional columns can included if they are recorded in the MSP file)
 
 +-------------+--------------------------------------------+---+
 | adduct      | name                                       |...|
@@ -400,9 +397,7 @@ Output
 | ...         | ...                                        |...|
 +-------------+--------------------------------------------+---+
 
-|
-|Table continued (these columns are derived from the MetFrag result):
-|
+Table continued (these columns are derived from the MetFrag result):
 
 +---+------------------+----------------------------------------------------------+-------------------------------------------------------------------------------------+-----+
 |...| sample_name      | ExplPeaks                                                | FormulasOfExplPeaks                                                                 | ... |
@@ -414,9 +409,8 @@ Output
 |...| ...              | ...                                                      | ...                                                                                 | ... |
 +---+------------------+----------------------------------------------------------+-------------------------------------------------------------------------------------+-----+
 
-|
-| Table continued (columns are derived from the MetFrag result):
-|
+
+Table continued (columns are derived from the MetFrag result):
 
 +---+------------------+----------------------------+------------------------------------------------------+------------+---------------------------------------------------------------------------------+---+
 |...| FragmenterScore  | FragmenterScore_Values     | FormulasOfExplPeaks                                  | Identifier | InChI                                                                           |...|
@@ -428,9 +422,8 @@ Output
 |...| ...              | ...                        | ...                                                  | ...        | ...                                                                             |...|
 +---+------------------+----------------------------+------------------------------------------------------+------------+---------------------------------------------------------------------------------+---+
 
-|
-| Table continued (columns are derived from the MetFrag result):
-|
+Table continued (columns are derived from the MetFrag result):
+
 
 +---+-------------+-----------------+-----------------------+----------------------------------------------+------------------+------------------+--------+
 |...| NoExplPeaks | NumberPeaksUsed | OfflineMetFusionScore | SMILES	                                   | Score            | SuspectListScore | XlogP3 |
@@ -473,8 +466,6 @@ Developers and contributors
 - **Kristian Peters (kpeters@ipb-halle.de) - IPB Halle (Germany)**
 - **Payam Emami (payam.emami@medsci.uu.se) - Uppsala Universitet (Sweden)**
 - **Christoph Ruttkies (christoph.ruttkies@ipb-halle.de) - IPB Halle (Germany)**
-
-
     </help>
     <citations>
         <citation type="doi">10.1186/s13321-016-0115-9</citation>
