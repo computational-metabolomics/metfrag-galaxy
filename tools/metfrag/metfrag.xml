@@ -1,4 +1,4 @@
-<tool id="metfrag" name="MetFrag" version="2.4.5+galaxy1.0.0">
+<tool id="metfrag" name="MetFrag" version="2.4.5+galaxy1">
     <description>
         in silico fragmentor for compound annotation of mass spectrometry fragmentation spectra
     </description>
