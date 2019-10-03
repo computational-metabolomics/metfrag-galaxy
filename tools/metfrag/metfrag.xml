@@ -282,7 +282,7 @@ a first and critical step for the identification of a molecule's structure. Cand
 are fragmented "in silico" and matched against mass to charge values. A score calculated using the fragment peak
 matches gives hints to the quality of the candidate spectrum assignment.
 
-Website: http://c-ruttkies.github.io/MetFrag
+Website: http://ipb-halle.github.io/MetFrag/
 
 Parameters
 ----------
