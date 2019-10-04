@@ -12,14 +12,14 @@ Source code: https://github.com/c-ruttkies/MetFrag
 Version
 ------
 
-v2.4.5+galaxy0.1.13 (Galaxy test-toolshed revision 8:9a3019c609d9 - 2019-09-13)
+v2.4.5+galaxy1
 
 (Using `MetFrag v2.4.5 <https://anaconda.org/bioconda/metfrag>`_)
 
 
 Galaxy
 ------
-`Galaxy <https://galaxyproject.org>`_ is an open, web-based platform for data intensive biomedical research. Whether on the free public server or your own instance, you can perform, reproduce, and share complete analyses. 
+`Galaxy <https://galaxyproject.org>`_ is an open, web-based platform for data intensive biomedical research. Whether on the free public server or your own instance, you can perform, reproduce, and share complete analyses.
 
 
 
@@ -43,6 +43,9 @@ Developers & Contributors
 
 Changes
 -------
+Version 2.4.5+galaxy1
+ - Update based on IUC guidlines
+
 Version 2.4.5+galaxy0.1.13
  - Submitted to test toolshed (8:9a3019c609d9)
  - Improved reporting of adducts
