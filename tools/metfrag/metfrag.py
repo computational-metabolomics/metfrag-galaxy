@@ -480,7 +480,6 @@ with open(args.result_pth, 'a') as merged_outfile:
                 bewrite = True
                 for key, value in line.items():
                     # Filter when no MS/MS peak matched
-                    
                     if key == "ExplPeaks":
                         if float(args.pctexplpeak_thrshld) > 0 \
                                 and value and "NA" in value:
