@@ -481,12 +481,12 @@ with open(args.result_pth, 'a') as merged_outfile:
                 for key, value in line.items():
                     # Filter when no MS/MS peak matched
                     if key == "ExplPeaks":
-                        if float(args.pctexplpeak_thrshld) > 0 and \
-                                "NA" in value:
+                        if float(args.pctexplpeak_thrshld) > 0 \
+                                and value and "NA" in value:
                             bewrite = False
                     # Filter with a score threshold
                     elif key == "Score":
-                        if float(value) <= float(args.score_thrshld):
+                        if value and float(value) <= float(args.score_thrshld):
                             bewrite = False
                     elif key == "NoExplPeaks":
                         nbfindpeak = float(value)
