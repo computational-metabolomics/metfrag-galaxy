@@ -50,6 +50,7 @@ parser.add_argument('--cores_top_level', default=1)
 parser.add_argument('--chunks', default=1)
 parser.add_argument('--meta_select_col', default='name')
 parser.add_argument('--skip_invalid_adducts', action='store_true')
+parser.add_argument('--output_fragment_peaks', action='store_true')
 
 parser.add_argument('--ScoreSuspectLists', default='')
 parser.add_argument('--MetFragScoreTypes',
@@ -92,6 +93,13 @@ regex_msp['precursor_mz'] = [r'^precursor.*m/z(?:=|:)\s*(\d*[.,]?\d*)$',
 regex_msp['precursor_type'] = [r'^precursor.*type(?:=|:)(.*)$',
                                r'^adduct(?:=|:)(.*)$',
                                r'^ADDUCTIONNAME(?:=|:)(.*)$']
+
+regex_msp['retention_time'] = [r'^RETENTION.*TIME(?:=|:)\s*(.*)$',
+                               r'^rt(?:=|:)\s*(.*)$',
+                               r'^time(?:=|:)\s*(.*)$']
+# From example winter_pos.mspy from kristian
+regex_msp['AlignmentID'] = [r'^AlignmentID(?:=|:)\s*(.*)$']
+
 regex_msp['num_peaks'] = [r'^Num.*Peaks(?:=|:)\s*(\d*)$']
 regex_msp['msp'] = [r'^Name(?:=|:)(.*)$']  # Flag for standard MSP format
 
@@ -102,6 +110,8 @@ regex_massbank['precursor_mz'] = [
     r'^MS\$FOCUSED_ION:\s+PRECURSOR_M/Z\s+(\d*[.,]?\d*)$']
 regex_massbank['precursor_type'] = [
     r'^MS\$FOCUSED_ION:\s+PRECURSOR_TYPE\s+(.*)$']
+regex_massbank['retention_time'] = [r'^AC\$CHROMATOGRAPHY:\s+RETENTION_TIME(\d*)']
+
 regex_massbank['num_peaks'] = [r'^PK\$NUM_PEAK:\s+(\d*)']
 regex_massbank['cols'] = [r'^PK\$PEAK:\s+(.*)']
 regex_massbank['massbank'] = [
@@ -121,7 +131,10 @@ elif args.schema == 'auto':
     meta_regex['precursor_mz'].extend(regex_msp['precursor_mz'])
     meta_regex['precursor_type'].extend(regex_msp['precursor_type'])
     meta_regex['num_peaks'].extend(regex_msp['num_peaks'])
+    meta_regex['retention_time'].extend(regex_msp['retention_time'])
+    meta_regex['AlignmentID'] = regex_msp['AlignmentID']
     meta_regex['msp'] = regex_msp['msp']
+
 else:
     sys.exit("No schema selected")
 
@@ -271,6 +284,8 @@ def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
     # record name (i.e. when using msPurity and we have the columns coded into
     # the name) or just the spectra index (spectrac)].
     # Returns the parameters used and the command line call
+    meta_info = {k: v for k, v in meta_info.items() if k
+                                               not in ['msp', 'massbank']}
 
     paramd = init_paramd(args)
     if args.meta_select_col == 'name':
@@ -287,7 +302,7 @@ def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
         # extracted from the MSP
         paramd['additional_details'] = meta_info
     else:
-        # Just have and index of the spectra in the MSP file
+        # Just have an index of the spectra in the MSP file
         paramd['additional_details'] = {'spectra_idx': spectrac}
 
     paramd["SampleName"] = "{}_metfrag_result".format(spectrac)
@@ -298,8 +313,13 @@ def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
 
     # write spec file
     with open(paramd["PeakListPath"], 'w') as outfile:
+        pls = ''
         for p in peaklist:
             outfile.write(p[0] + "\t" + p[1] + "\n")
+            pls = pls + '{}_{};'.format(p[0], p[1])
+
+        if args.output_fragment_peaks:
+            paramd['additional_details']['PeakListString'] = pls[:-1]
 
     # =============== Update param based on MSP metadata ======================
     # Replace param details with details from MSP if required
@@ -318,8 +338,13 @@ def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
         print('Skipping {}'.format(paramd["SampleName"]))
         return '', ''
 
-    paramd['additional_details']['adduct'] = adduct
+    if not ('precursor_type' in paramd['additional_details']
+        or 'adduct' in paramd['additional_details']):
+        paramd['additional_details']['adduct'] = adduct
+
     paramd["NeutralPrecursorMass"] = nm
+
+
 
     # ============== Create CLI cmd for metfrag ===============================
     cmd = "metfrag"

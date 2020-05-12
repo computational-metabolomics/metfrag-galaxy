@@ -12,7 +12,7 @@ Source code: https://github.com/c-ruttkies/MetFrag
 Version
 ------
 
-v2.4.5+galaxy2
+v2.4.5+galaxy3
 
 (Using `MetFrag v2.4.5 <https://anaconda.org/bioconda/metfrag>`_)
 
@@ -43,6 +43,9 @@ Developers & Contributors
 
 Changes
 -------
+Version 2.4.5+galaxy3
+ - Option added to include all fragment peaks in output
+
 Version 2.4.5+galaxy2
  - Change owner to computational-metabolomics 
  - Update tests output based on updates of external compound databases
