@@ -45,6 +45,7 @@ Changes
 -------
 Version 2.4.5+galaxy3
  - Option added to include all fragment peaks in output
+ - Additional meta columns added for output (if available) e.g. retention time
 
 Version 2.4.5+galaxy2
  - Change owner to computational-metabolomics 
