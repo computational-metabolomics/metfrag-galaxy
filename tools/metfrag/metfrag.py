@@ -110,7 +110,8 @@ regex_massbank['precursor_mz'] = [
     r'^MS\$FOCUSED_ION:\s+PRECURSOR_M/Z\s+(\d*[.,]?\d*)$']
 regex_massbank['precursor_type'] = [
     r'^MS\$FOCUSED_ION:\s+PRECURSOR_TYPE\s+(.*)$']
-regex_massbank['retention_time'] = [r'^AC\$CHROMATOGRAPHY:\s+RETENTION_TIME(\d*)']
+regex_massbank['retention_time'] = [
+    r'^AC\$CHROMATOGRAPHY:\s+RETENTION_TIME(\d*)']
 
 regex_massbank['num_peaks'] = [r'^PK\$NUM_PEAK:\s+(\d*)']
 regex_massbank['cols'] = [r'^PK\$PEAK:\s+(.*)']
@@ -285,7 +286,7 @@ def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
     # the name) or just the spectra index (spectrac)].
     # Returns the parameters used and the command line call
     meta_info = {k: v for k, v in meta_info.items() if k
-                                               not in ['msp', 'massbank']}
+                 not in ['msp', 'massbank']}
 
     paramd = init_paramd(args)
     if args.meta_select_col == 'name':
@@ -338,13 +339,11 @@ def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
         print('Skipping {}'.format(paramd["SampleName"]))
         return '', ''
 
-    if not ('precursor_type' in paramd['additional_details']
-        or 'adduct' in paramd['additional_details']):
+    if not ('precursor_type' in paramd['additional_details'] or 'adduct'
+            in paramd['additional_details']):
         paramd['additional_details']['adduct'] = adduct
 
     paramd["NeutralPrecursorMass"] = nm
-
-
 
     # ============== Create CLI cmd for metfrag ===============================
     cmd = "metfrag"
@@ -498,7 +497,6 @@ with open(args.result_pth, 'a') as merged_outfile:
     dwriter.writeheader()
 
     for fn in outfiles:
-
         with open(fn) as infile:
             reader = csv.DictReader(infile, delimiter=',', quotechar='"')
             for line in reader:
