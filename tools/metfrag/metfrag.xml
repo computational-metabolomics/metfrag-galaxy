@@ -51,7 +51,7 @@
             --minMSMSpeaks $minMSMSpeaks
             --schema $schema
 
-            $output_fragment_peaks
+            $output_cl
 
             $PreProcessFilter.UnconnectedCompoundFilter
             $PreProcessFilter.IsotopeFilter
@@ -152,9 +152,10 @@
                help="If no adduct type is provided within the MSP file or if the adduct type is not usable
                      with MetFrag, set to 'yes' if these spectra should be skipped or 'no' if the default
                      of [M+H]+ for pos data or [M-H]- for neg data should be used"/>
-        <param argument="--output_fragment_peaks" type="boolean" checked="true"
-                   truevalue="--output_fragment_peaks" falsevalue=""
-                   label="Output fragment peaks" help=""/>
+        <param argument="--output_cl" type="boolean" checked="true"
+                   truevalue="--output_cl" falsevalue=""
+                   label="Output the MetFrag command line call" help="This will output all the parameters used
+                                                                      for each MetFrag command line call (including the fragment peaks)"/>
         <section name="PreProcessFilter" title="PreProcessing filters" expanded="False">
             <param argument="--UnconnectedCompoundFilter" type="boolean" checked="false"
                    truevalue="--UnconnectedCompoundFilter" falsevalue=""
@@ -220,7 +221,7 @@
             <param name="MetFragDatabaseType" value="LocalCSV"/>
             <param name="LocalDatabasePath" value="demo_db.csv"/>
             <param name="meta_select_col" value="name"/>
-            <param name="output_fragment_peaks" value="false"/>
+            <param name="output_cl" value="false"/>
             <output name="results" file="metfrag_massbank.tabular"/>
         </test>
         <test>
@@ -233,7 +234,7 @@
             <param name="LocalDatabasePath" value="demo_db.csv"/>
             <output name="results" file="metfrag_msp.tabular"/>
             <param name="meta_select_col" value="name"/>
-            <param name="output_fragment_peaks" value="false"/>
+            <param name="output_cl" value="false"/>
         </test>
         <test>
             <!-- Test PubChem API with "winter" dataset -->
@@ -250,7 +251,7 @@
             <param name="MetFragDatabaseType" value="LocalCSV"/>
             <param name="LocalDatabasePath" value="demo_db.csv"/>
             <param name="meta_select_col" value="name"/>
-            <param name="output_fragment_peaks" value="false"/>
+            <param name="output_cl" value="false"/>
             <output name="results" file="RP022611.tabular"/>
         </test>
         <test>
@@ -260,7 +261,7 @@
             <param name="MetFragDatabaseType" value="LocalCSV"/>
             <param name="LocalDatabasePath" value="demo_db.csv"/>
             <param name="meta_select_col" value="name"/>
-            <param name="output_fragment_peaks" value="false"/>
+            <param name="output_cl" value="false"/>
             <output name="results" file="RP022611_all_col.tabular"/>
         </test>
         <test>
@@ -274,7 +275,7 @@
                 </conditional>
             </conditional>
             <param name="meta_select_col" value="name"/>
-            <param name="output_fragment_peaks" value="false"/>
+            <param name="output_cl" value="false"/>
             <output name="results" file="RP022611_suspect_default.txt"/>
         </test>
         <test>
@@ -282,7 +283,7 @@
             <param name="input" value="invalid_adduct.msp"/>
             <param name="skip_invalid_adducts" value="true"/>
             <param name="meta_select_col" value="name"/>
-            <param name="output_fragment_peaks" value="false"/>
+            <param name="output_cl" value="false"/>
             <output name="results" file="invalid_adduct_result.txt" ftype="tabular"/>
         </test>
     </tests>

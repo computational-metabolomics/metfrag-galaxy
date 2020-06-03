@@ -50,7 +50,7 @@ parser.add_argument('--cores_top_level', default=1)
 parser.add_argument('--chunks', default=1)
 parser.add_argument('--meta_select_col', default='name')
 parser.add_argument('--skip_invalid_adducts', action='store_true')
-parser.add_argument('--output_fragment_peaks', action='store_true')
+parser.add_argument('--output_cl', action='store_true')
 
 parser.add_argument('--ScoreSuspectLists', default='')
 parser.add_argument('--MetFragScoreTypes',
@@ -313,14 +313,15 @@ def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
                                           "{}_tmpspec.txt".format(spectrac))
 
     # write spec file
+
     with open(paramd["PeakListPath"], 'w') as outfile:
         pls = ''
         for p in peaklist:
             outfile.write(p[0] + "\t" + p[1] + "\n")
             pls = pls + '{}_{};'.format(p[0], p[1])
 
-        if args.output_fragment_peaks:
-            paramd['additional_details']['PeakListString'] = pls[:-1]
+        if args.output_cl:
+            peaklist_str = pls[:-1]
 
     # =============== Update param based on MSP metadata ======================
     # Replace param details with details from MSP if required
@@ -351,6 +352,9 @@ def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
         if k not in ['PrecursorIonModeDefault', 'nm_mass_diff_default',
                      'additional_details']:
             cmd += " {}={}".format(str(k), str(v))
+
+    if args.output_cl:
+        paramd['additional_details']['MetFragCLIString'] = '"{} PeakListString={}"'.format(cmd, peaklist_str)
 
     # ============== Run metfrag ==============================================
     # print(cmd)
