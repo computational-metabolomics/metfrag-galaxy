@@ -354,7 +354,7 @@ def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
             cmd += " {}={}".format(str(k), str(v))
 
     if args.output_cl:
-        paramd['additional_details']['MetFragCLIString'] = '"{} PeakListString={}"'.format(cmd, peaklist_str)
+        paramd['additional_details']['MetFragCLIString'] = '{} PeakListString={}'.format(cmd, peaklist_str)
 
     # ============== Run metfrag ==============================================
     # print(cmd)
