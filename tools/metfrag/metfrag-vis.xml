@@ -7,6 +7,10 @@
     </macros>
     <requirements>
         <requirement type="package" version="2.4.5">metfrag</requirement>
+        <requirement type="package" version="1.0.4">pubchempy</requirement>
+        <requirement type="package">matplotlib</requirement>
+        <requirement type="package">numpy</requirement>
+        <requirement type="package" version=0.9">cdk-inchi-to-svg</requirement>
     </requirements>
     <stdio>
         <regex match="Cannot allocate memory"
