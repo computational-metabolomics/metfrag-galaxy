@@ -2,16 +2,14 @@
     <description>
         Visualisation for MetFrag results
     </description>
-    <macros>
-        <import>macros.xml</import>
-    </macros>
     <requirements>
         <requirement type="package" version="2.4.5">metfrag</requirement>
+        <requirement type="package" version="0.9">cdk-inchi-to-svg</requirement>
         <requirement type="package" version="3.7.3">python</requirement>
         <requirement type="package" version="1.0.4">pubchempy</requirement>
         <requirement type="package">matplotlib</requirement>
+        <requirement type="package">requests</requirement>
         <requirement type="package">numpy</requirement>
-        <requirement type="package" version="0.9">cdk-inchi-to-svg</requirement>
     </requirements>
     <stdio>
         <regex match="Cannot allocate memory"
@@ -21,28 +19,18 @@
     </stdio>
     <command detect_errors="exit_code">
     <![CDATA[
-        cd /tmp;
-        metfrag-vis.py -i $metfrag_vis_input -o /tmp/metfrag-vis.html -s -c -m $metfrag_vis_hits_limit 
-        #if $metfrag_synonyms == "True"
-            -s 
-        #end if
-        #if $metfrag_classyfire == "True"
-            -c 
-        #end if
-        ;
-        mv /tmp/metfrag-vis.html $metfrag_vis_output;
+         python '$__tool_directory__/metfrag-vis.py'
+            -i $metfrag_vis_input
+            -o $metfrag_vis_output
+            -m $metfrag_vis_hits_limit
+            $metfrag_synonyms
+            $metfrag_classyfire
     ]]></command>
     <inputs>
         <param name="metfrag_vis_input" type="data" format="csv" multiple="False" optional="False" label="MetFrag result file (Output tabular file from MetFrag tool)" />
         <param name="metfrag_vis_hits_limit" type="text" value="10" label="MetFrag Hits Limit" optional="False" help="Limit of candidate hits returned per compound" />
-        <param name="metfrag_synonyms" type="select" value="True" optional="False" label="Synonyms" help="Fetch synonyms for each candidate from PubChem">
-            <option value="True" selected="True">True</option>
-            <option value="False">False</option>
-        </param>
-        <param name="metfrag_classyfire" type="select" value="True" optional="False" label="ClassyFire" help="Fetch compound classes for each candidate using ClassyFire">
-            <option value="True" selected="True">True</option>
-            <option value="False">False</option>
-        </param>
+        <param name="metfrag_synonyms" type="boolean" truevalue="-s" falsevalue="" checked="true" label="Synonyms" help="Fetch synonyms for each candidate from PubChem"/>
+        <param name="metfrag_classyfire"  type="boolean" truevalue="-c" falsevalue="" label="ClassyFire" help="Fetch compound classes for each candidate using ClassyFire"/>
     </inputs>
     <outputs>
         <data name="metfrag_vis_output" format="html" label="Summary HTML file" />
@@ -50,13 +38,8 @@
 
     <tests>
         <test>
-            <param name="input" value="massbank_format.txt"/>
-            <param name="schema" value="massbank"/>
-            <param name="skip_invalid_adducts" value="false"/>
-            <param name="MetFragDatabaseType" value="PubChem"/>
-            <param name="MetFragDatabaseType" value="LocalCSV"/>
-            <param name="LocalDatabasePath" value="demo_db.csv"/>
-            <output name="metfrag_vis_output" file="metfrag_massbank.tabular"/>
+            <param name="metfrag_vis_input" value="metfrag_vis_input.tabular"/>
+            <output name="metfrag_vis_output" file="metfrag_vis_output.html" compare="sim_size"/>
         </test>
     </tests>
 
