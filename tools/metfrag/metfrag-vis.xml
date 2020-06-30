@@ -11,7 +11,7 @@
         <requirement type="package" version="1.0.4">pubchempy</requirement>
         <requirement type="package">matplotlib</requirement>
         <requirement type="package">numpy</requirement>
-        <requirement type="package" version=0.9">cdk-inchi-to-svg</requirement>
+        <requirement type="package" version="0.9">cdk-inchi-to-svg</requirement>
     </requirements>
     <stdio>
         <regex match="Cannot allocate memory"
@@ -45,9 +45,9 @@
         </param>
     </inputs>
     <outputs>
-        <data name="metfrag_vis_output" type="data" format="html" label="Summary HTML file" />
+        <data name="metfrag_vis_output" format="html" label="Summary HTML file" />
     </outputs>
-<!--
+
     <tests>
         <test>
             <param name="input" value="massbank_format.txt"/>
@@ -56,10 +56,10 @@
             <param name="MetFragDatabaseType" value="PubChem"/>
             <param name="MetFragDatabaseType" value="LocalCSV"/>
             <param name="LocalDatabasePath" value="demo_db.csv"/>
-            <output name="results" file="metfrag_massbank.tabular"/>
+            <output name="metfrag_vis_output" file="metfrag_massbank.tabular"/>
         </test>
     </tests>
--->
+
     <help>
 ---------------------
 MetFrag Visualisation
@@ -80,7 +80,7 @@ Website: http://ipb-halle.github.io/MetFrag/
 Parameters
 ----------
 
-**\1. Tabular file **
+**\1. Tabular file**
 
 Tabular file created using the *MetFrag* tool.
 
@@ -88,11 +88,11 @@ Tabular file created using the *MetFrag* tool.
 
 Defines the limit of candidates returned per compound.
 
-**\3. Synonyms **
+**\3. Synonyms**
 
 If set to True, synonyms for each candidate are fetched from PubChem.
 
-**\4. ClassyFire **
+**\4. ClassyFire**
 
 If set to True, compound classes are fetched for each candidate using ClassyFire.
 
