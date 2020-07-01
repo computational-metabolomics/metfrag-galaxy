@@ -3,16 +3,19 @@
 # Version: 3.0
 
 # Load modules
-import base64
 import argparse
-import os
+import base64
 import csv
+import os
 import re
 import time
 import urllib.parse
+
+import matplotlib.pyplot as plt
+
+import pubchempy
+
 import requests
-import pubchempy  # pip install pubchempy
-import matplotlib.pyplot as plt  # pip install matplotlib
 
 # Parse arguments
 parser = argparse.ArgumentParser(
