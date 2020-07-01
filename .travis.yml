@@ -28,7 +28,7 @@ jobs:
         - cat changed_repositories.list
       script:
         - set -e
-        - cd "$TRAVIS_BUILD_DIR" && flake8 --exclude=.git,./deprecated/ .
+        - cd "$TRAVIS_BUILD_DIR" && flake8  --exclude=.git,./deprecated/ .
         - while read -r DIR; do planemo shed_lint --tools --ensure_metadata --urls --report_level warn --fail_level error --recursive "$DIR"; done < changed_repositories.list
 
     - stage: test
@@ -64,7 +64,7 @@ jobs:
 
 before_install:
   - export GALAXY_REPO=https://github.com/galaxyproject/galaxy
-  - export GALAXY_RELEASE=release_19.09
+  - export GALAXY_RELEASE=release_20.01
   # - export PLANEMO_CONDA_PREFIX="$HOME/conda"
   - unset JAVA_HOME
 
