@@ -339,6 +339,22 @@
             <param name="output_cl" value="false"/>
             <output name="results" file="invalid_adduct_result.txt" ftype="tabular"/>
         </test>
+        <test>
+            <!-- Test all adducts-->
+            <param name="input" value="RP022611.txt"/>
+            <param name="schema" value="massbank"/>
+            <param name="polarity" value="neg"/>
+            <param name="skip_invalid_adducts" value="false"/>
+            <param name="MetFragDatabaseType" value="PubChem"/>
+            <param name="MetFragDatabaseType" value="LocalCSV"/>
+            <param name="LocalDatabasePath" value="demo_db.csv"/>
+            <param name="meta_select_col" value="name"/>
+            <param name="output_cl" value="false"/>
+            <output name="results" file="RP022611_all_adducts.tabular"/>
+            <conditional name="adducts_cond">
+                <param name="adducts_selector" value="all"/>
+            </conditional>
+        </test>
     </tests>
     <help>
 -------
