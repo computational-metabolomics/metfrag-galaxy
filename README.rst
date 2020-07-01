@@ -45,10 +45,12 @@ Developers & Contributors
 Changes
 -------
 2nd July 2020
- - NEW TOOL "MetFrag Vis" - version 2.4.5+galaxy0 - Enhanced visualisation of MetFrag results
- - Metfrag tool Version 2.4.5+galaxy3 released
- - Option added to include all fragment peaks in output
- - Additional meta columns added for output (if available) e.g. retention time
+ - NEW TOOL "MetFrag Vis" - 2.4.5+galaxy0 released
+    - Enhanced visualisation of MetFrag results
+ - Metfrag tool - 2.4.5+galaxy3 released
+    - Option added to include all fragment peaks in output
+    - Additional meta columns added for output (if available) e.g. retention time
+    - Provide adducts at tool level as well as MSP level
 
 Version 2.4.5+galaxy2
  - Change owner to computational-metabolomics 

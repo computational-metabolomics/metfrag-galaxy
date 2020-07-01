@@ -60,6 +60,8 @@ parser.add_argument('--ScoreSuspectLists', default='')
 parser.add_argument('--MetFragScoreTypes',
                     default="FragmenterScore,OfflineMetFusionScore")
 parser.add_argument('--MetFragScoreWeights', default="1.0,1.0")
+parser.add_argument('-a', '--adducts', action='append', nargs=1,
+                    required=False, default=[], help='Adducts used')
 
 args = parser.parse_args()
 print(args)
@@ -158,10 +160,9 @@ adduct_types = {
     # same as above but different style of writing adduct
     '[M+CH3COO]-': 59.01385,
     '[M-H+CH3COOH]-': 59.01385
+    # same as above but different style of writing adduct
 }
-inv_adduct_types = {
-    int(round(v, 0)): k for k, v in six.iteritems(adduct_types)
-}
+
 
 
 # function to extract the meta data using the regular expressions
@@ -337,6 +338,8 @@ def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
         paramd["PrecursorIonMode"] = \
             int(round(adduct_types[meta_info['precursor_type']], 0))
     elif not args.skip_invalid_adducts:
+        inv_adduct_types = {int(round(v, 0)): k for k, v in
+                            six.iteritems(adduct_types)}
         adduct = inv_adduct_types[int(paramd['PrecursorIonModeDefault'])]
         paramd["PrecursorIonMode"] = paramd['PrecursorIonModeDefault']
         nm = float(meta_info['precursor_mz']) - paramd['nm_mass_diff_default']
@@ -416,7 +419,8 @@ with open(args.input_pth, "r") as infile:
             peaklist.append(save_line)
 
         elif plinesread and plinesread == pnumlines:
-            # ======= Get sample name and additional details for output =======
+            # == Get sample name and additional details for output and RUN ====
+            
             spectrac += 1
             paramd, cmd = run_metfrag(meta_info, peaklist, args, wd, spectrac,
                                       adduct_types)
@@ -429,7 +433,7 @@ with open(args.input_pth, "r") as infile:
             pnumlines = 0
             plinesread = 0
 
-    # end of file. Check if there is a MSP spectra to run metfrag on still
+    # end of file. Check if there is a MSP spectra to run metfrag on
     if plinesread and plinesread == pnumlines:
 
         paramd, cmd = run_metfrag(meta_info, peaklist, args, wd, spectrac + 1,
@@ -491,8 +495,11 @@ for k, paramd in six.iteritems(paramds):
 if 'InChIKey' not in headers:
     headers.append('InChIKey')
 
+print(headers)
+additional_detail_headers = sorted(additional_detail_headers)
 headers = additional_detail_headers + sorted(list(set(headers)))
 
+print(headers)
 # Sort files nicely
 outfiles.sort(
     key=lambda s: int(re.match(r'^.*/(\d+)_metfrag_result.csv', s).group(1)))

@@ -64,6 +64,28 @@
             --FilterExcludedElements '$PreProcessFilter.FilterExcludedElements'
             --FilterIncludedExclusiveElements '$PreProcessFilter.FilterIncludedExclusiveElements'
 
+            #if $adducts_cond.adducts_selector == 'select':
+                #for $a in $adducts_cond.adducts
+                    --adducts $a
+                #end for
+            #elif $adducts_cond.adducts_selector == 'all':
+                #if $polarity == 'pos':
+                    --adducts [M+H]+
+                    --adducts [M+NH4]+
+                    --adducts [M+Na]+
+                    --adducts [M+K]+
+                    --adducts [M+CH3OH+H]+
+                    --adducts [M+ACN+H]+
+                    --adducts [M+ACN+Na]+
+                    --adducts [M+2ACN+H]+
+                 #elif $polarity == 'neg':
+                    --adducts [M-H]-
+                    --adducts [M+Cl]-
+                    --adducts [M+HCOO]-
+                    --adducts [M+CH3COO]-
+                 #end if
+            #end if
+
             $skip_invalid_adducts
             --score_thrshld $PostProcessFilter.score_thrshld
             --pctexplpeak_thrshld $PostProcessFilter.pctexplpeak_thrshld
@@ -146,12 +168,43 @@
                 <expand macro="metfrag_scoring" suspectlistscore="False" weights="1.0,1.0"/>
             </when>
         </conditional>
-        <param argument="--minMSMSpeaks" type="integer" label="Minimum number of MS/MS peaks" value="0"/>
+
+        <conditional name="adducts_cond">
+            <param name="adducts_selector" type="select" label="How to handle adducts"
+                   help="Choose whether to include a suspect list">
+                <option value="msp" selected="True">Use adducts defined in MSP file</option>
+                <option value="select" >Select from list in tool</option>
+                <option value="all" >Use all available adducts for either pos or neg ionisation mode</option>
+            </param>
+            <when value="msp">
+            </when>
+            <when value="select">
+                <param argument="--adducts" label="Select adducts" type="select" help="" multiple="true" display="checkboxes">
+                    <option value="[M+H]+" selected="True">[M+H]+ 1.007276</option>
+                    <option value="[M+NH4]+">[M+NH4]+ 18.034374</option>
+                    <option value="[M+Na]+">[M+Na]+ 22.989218</option>
+                    <option value="[M+K]+">[M+K]+ 38.963158</option>
+                    <option value="[M+CH3OH+H]+">[M+CH3OH+H]+ 33.033489</option>
+                    <option value="[M+ACN+H]+">[M+ACN+H]+ 42.033823</option>
+                    <option value="[M+ACN+Na]+">[M+ACN+Na]+ 64.015765</option>
+                    <option value="[M+2ACN+H]+">[M+2ACN+H]+ 83.06037</option>
+                    <option value="[M-H]-" >[M-H]- -1.007276</option>
+                    <option value="[M+Cl]-">[M+Cl]- 34.969402</option>
+                    <option value="[M+HCOO]-">[M+HCOO]- 44.99819</option>
+                    <option value="[M+CH3COO]-">[M+CH3COO]- 59.01385</option>
+                </param>
+            </when>
+            <when value="all">
+            </when>
+        </conditional>
+
         <param argument="--skip_invalid_adducts" type="boolean" label="Skip invalid or undefined adduct types?"
                truevalue="--skip_invalid_adducts" falsevalue="" checked="true"
                help="If no adduct type is provided within the MSP file or if the adduct type is not usable
                      with MetFrag, set to 'yes' if these spectra should be skipped or 'no' if the default
                      of [M+H]+ for pos data or [M-H]- for neg data should be used"/>
+
+        <param argument="minMSMSpeaks" type="integer" label="Minimum number of MS/MS peaks" value="0"/>
         <param argument="--output_cl" type="boolean" checked="true"
                    truevalue="--output_cl" falsevalue=""
                    label="Output the MetFrag command line call" help="This will output all the parameters used
