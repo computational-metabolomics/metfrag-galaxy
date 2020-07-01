@@ -3,6 +3,7 @@ from __future__ import absolute_import, print_function
 try:
     from configparser import ConfigParser
 except ImportError as e:
+    print(e)
     from ConfigParser import ConfigParser
 
 import argparse
@@ -17,6 +18,7 @@ import tempfile
 from collections import defaultdict
 
 import six
+
 
 # function to extract the meta data using the regular expressions
 def parse_meta(meta_regex, meta_info=None):
