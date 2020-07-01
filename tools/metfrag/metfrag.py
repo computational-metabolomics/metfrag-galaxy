@@ -1,6 +1,10 @@
 from __future__ import absolute_import, print_function
 
-import ConfigParser
+try:
+    from configparser import ConfigParser
+except ImportError as e:
+    from ConfigParser import ConfigParser
+
 import argparse
 import csv
 import glob
@@ -59,8 +63,7 @@ parser.add_argument('--MetFragScoreWeights', default="1.0,1.0")
 
 args = parser.parse_args()
 print(args)
-
-config = ConfigParser.ConfigParser()
+config = ConfigParser()
 config.read(
     os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.ini'))
 
@@ -155,9 +158,10 @@ adduct_types = {
     # same as above but different style of writing adduct
     '[M+CH3COO]-': 59.01385,
     '[M-H+CH3COOH]-': 59.01385
-    # same as above but different style of writing adduct
 }
-inv_adduct_types = {int(round(v, 0)): k for k, v in adduct_types.iteritems()}
+inv_adduct_types = {
+    int(round(v, 0)): k for k, v in six.iteritems(adduct_types)
+}
 
 
 # function to extract the meta data using the regular expressions
