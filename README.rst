@@ -43,7 +43,9 @@ Developers & Contributors
 
 Changes
 -------
-Version 2.4.5+galaxy3
+2nd July 2020
+ - NEW TOOL "MetFrag Vis" - version 2.4.5+galaxy0 - Enhanced visualisation of MetFrag results
+ - Metfrag tool Version 2.4.5+galaxy3 released
  - Option added to include all fragment peaks in output
  - Additional meta columns added for output (if available) e.g. retention time
 

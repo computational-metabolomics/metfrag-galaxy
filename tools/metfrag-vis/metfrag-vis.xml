@@ -1,4 +1,4 @@
-<tool id="metfrag_vis" name="MetFrag Vis" version="2.4.5+galaxy2" profile="18.01">
+<tool id="metfrag_vis" name="MetFrag Vis" version="2.4.5+galaxy0" profile="18.01">
     <description>
         Visualisation for MetFrag results
     </description>

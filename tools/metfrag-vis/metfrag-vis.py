@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-# Version: 3.0
-
 # Load modules
 import argparse
 import base64
