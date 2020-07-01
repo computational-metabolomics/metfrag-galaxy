@@ -27,10 +27,10 @@
             $metfrag_classyfire
     ]]></command>
     <inputs>
-        <param name="metfrag_vis_input" type="data" format="csv" multiple="False" optional="False" label="MetFrag result file (Output tabular file from MetFrag tool)" />
-        <param name="metfrag_vis_hits_limit" type="text" value="10" label="MetFrag Hits Limit" optional="False" help="Limit of candidate hits returned per compound" />
-        <param name="metfrag_synonyms" type="boolean" truevalue="-s" falsevalue="" checked="true" label="Synonyms" help="Fetch synonyms for each candidate from PubChem"/>
-        <param name="metfrag_classyfire"  type="boolean" truevalue="-c" falsevalue="" label="ClassyFire" help="Fetch compound classes for each candidate using ClassyFire"/>
+        <param argument="-i" name="metfrag_vis_input" type="data" format="csv" multiple="False" optional="False" label="MetFrag result file (Output tabular file from MetFrag tool)" />
+        <param argument="-m" name="metfrag_vis_hits_limit" type="text" value="10" label="MetFrag Hits Limit" optional="False" help="Limit of candidate hits returned per compound" />
+        <param argument="-s" name="metfrag_synonyms" type="boolean" truevalue="-s" falsevalue="" checked="true" label="Synonyms" help="Fetch synonyms for each candidate from PubChem"/>
+        <param argument="-c" name="metfrag_classyfire"  type="boolean" truevalue="-c" falsevalue="" label="ClassyFire" help="Fetch compound classes for each candidate using ClassyFire"/>
     </inputs>
     <outputs>
         <data name="metfrag_vis_output" format="html" label="Summary HTML file" />
