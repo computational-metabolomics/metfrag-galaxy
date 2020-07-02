@@ -173,7 +173,7 @@
             <param name="adducts_selector" type="select" label="How to handle adducts"
                    help="Choose whether to include a suspect list">
                 <option value="msp" selected="True">Use adducts defined in MSP file</option>
-                <option value="select" >Select from list in tool</option>
+                <option value="select" >Select from list</option>
                 <option value="all" >Use all available adducts for either pos or neg ionisation mode</option>
             </param>
             <when value="msp">
