@@ -439,7 +439,6 @@ if __name__ == "__main__":
                 # =Get sample name and additional details for output and RUN ==
                 if adducts_from_cli:
                     for adduct in adducts_from_cli:
-                        print(adduct)
                         spectrac += 1
                         meta_info['precursor_type'] = adduct
                         paramd, cmd = run_metfrag(meta_info, peaklist, args,
@@ -464,7 +463,6 @@ if __name__ == "__main__":
 
             if adducts_from_cli:
                 for adduct in adducts_from_cli:
-                    print(adduct)
                     spectrac += 1
                     meta_info['precursor_type'] = adduct
                     paramd, cmd = run_metfrag(meta_info, peaklist, args,
