@@ -65,7 +65,7 @@ def get_meta_regex(schema):
     regex_massbank['precursor_type'] = [
         r'^MS\$FOCUSED_ION:\s+PRECURSOR_TYPE\s+(.*)$']
     regex_massbank['retention_time'] = [
-        r'^AC\$CHROMATOGRAPHY:\s+RETENTION_TIME(\d*)']
+        r'^AC\$CHROMATOGRAPHY:\s+RETENTION_TIME\s*(\d*\.?\d+).*']
 
     regex_massbank['num_peaks'] = [r'^PK\$NUM_PEAK:\s+(\d*)']
     regex_massbank['cols'] = [r'^PK\$PEAK:\s+(.*)']
@@ -210,7 +210,7 @@ def run_metfrag(meta_info, peaklist, args, wd, spectrac, adduct_types):
     # the name) or just the spectra index (spectrac)].
     # Returns the parameters used and the command line call
     meta_info = {k: v for k, v in meta_info.items() if k
-                 not in ['msp', 'massbank']}
+                 not in ['msp', 'massbank', 'cols']}
 
     paramd = init_paramd(args)
     if args.meta_select_col == 'name':
@@ -399,7 +399,7 @@ if __name__ == "__main__":
     spectrac = 0
     # this dictionary will store the meta data results form the MSp file
     meta_info = {}
-    print(args.adducts)
+
     if args.adducts:
         adducts_from_cli = [
             a[0].replace('__ob__', '[').replace('__cb__', ']') for a in

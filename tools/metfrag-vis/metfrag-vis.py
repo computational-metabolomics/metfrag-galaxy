@@ -463,7 +463,6 @@ with open(input_tsv, "r") as metfrag_file:
                 monoisotopic_mass = row["MonoisotopicMass"]
                 precursor_mz = row["precursor_mz"]
 
-
                 if "retention_time" in row:
                     precursor_rt = row["retention_time"]
                     try:

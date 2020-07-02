@@ -313,7 +313,6 @@
             <param name="schema" value="massbank"/>
             <param name="MetFragDatabaseType" value="LocalCSV"/>
             <param name="LocalDatabasePath" value="demo_db.csv"/>
-            <param name="meta_select_col" value="name"/>
             <param name="output_cl" value="false"/>
             <output name="results" file="RP022611_all_col.tabular"/>
         </test>
