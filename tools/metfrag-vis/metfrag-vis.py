@@ -461,16 +461,26 @@ with open(input_tsv, "r") as metfrag_file:
                 candidates = 0
                 identifier = row["name"]
                 monoisotopic_mass = row["MonoisotopicMass"]
-                precursor_rt = row["retention_time"]
-                try:
-                    precursor_rt = round(float(precursor_rt), 4)
-                except ValueError:
-                    continue
-
                 precursor_mz = row["precursor_mz"]
-                precursor_type = row["precursor_type"]
 
-                if (line_count > 1):
+
+                if "retention_time" in row:
+                    precursor_rt = row["retention_time"]
+                    try:
+                        precursor_rt = round(float(precursor_rt), 4)
+                    except ValueError:
+                        continue
+                else:
+                    precursor_rt = ''
+
+                if "precursor_type" in row:
+                    precursor_type = row["precursor_type"]
+                elif "adduct" in row:
+                    precursor_type = row["adduct"]
+                else:
+                    precursor_type = ''
+
+                if line_count > 1:
                     metfrag_html.write(str('</table>\n'))
 
                 metfrag_html.write(str('\n' + '<h2>' + identifier + '</h2>\n'))
