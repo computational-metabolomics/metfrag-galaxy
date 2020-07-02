@@ -462,6 +462,11 @@ with open(input_tsv, "r") as metfrag_file:
                 identifier = row["name"]
                 monoisotopic_mass = row["MonoisotopicMass"]
                 precursor_rt = row["retention_time"]
+                try:
+                    precursor_rt = round(float(precursor_rt), 4)
+                except ValueError:
+                    continue
+
                 precursor_mz = row["precursor_mz"]
                 precursor_type = row["precursor_type"]
 
@@ -475,7 +480,7 @@ with open(input_tsv, "r") as metfrag_file:
                     round(float(precursor_mz), 4)) + '<br>'))
                 metfrag_html.write(
                     str('<b>Precursor Retention Time:</b> ' + str(
-                        round(float(precursor_rt), 4)) + '<br></p>'))
+                        precursor_mz) + '<br></p>'))
                 metfrag_html.write(str('\n' + '<table>\n'))
                 metfrag_html.write(str(
                     '<tr style="vertical-align:bottom; '
