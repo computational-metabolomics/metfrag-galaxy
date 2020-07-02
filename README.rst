@@ -46,6 +46,7 @@ Changes
 -------
 2nd July 2020
  - NEW TOOL "MetFrag Vis" - 2.4.5+galaxy0 released
+    - Thanks Kristian Peters!
     - Enhanced visualisation of MetFrag results
  - Metfrag tool - 2.4.5+galaxy3 released
     - Option added to include all fragment peaks in output
