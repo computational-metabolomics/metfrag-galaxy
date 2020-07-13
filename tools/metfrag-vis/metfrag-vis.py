@@ -119,7 +119,7 @@ def biocyc_link(compound_name):
 def hmdb_link(compound_name):
     hmdb_url = urllib.parse.urlparse(
         str(
-            'https://hmdb.ca/unearth/q?utf8=✓&query=' +
+            'https://hmdb.ca/unearth/q?utf8=\xe2&query=' +
             compound_name + '&searcher=metabolites&button='))
     return (hmdb_url.geturl())
 
@@ -355,10 +355,7 @@ metfrag_html.write('<body>\n')
 
 # Read input csv file
 with open(input_tsv, "r") as metfrag_file:
-    dialect = csv.Sniffer().sniff(metfrag_file.read(1024))
-    metfrag_file.seek(0)
-
-    metfrag_results = csv.DictReader(metfrag_file, delimiter=dialect.delimiter)
+    metfrag_results = csv.DictReader(metfrag_file, delimiter='\t')
     # Parse each line
     line_count = 0
     compound = ""
