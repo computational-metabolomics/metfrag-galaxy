@@ -10,9 +10,10 @@ Source code: https://github.com/c-ruttkies/MetFrag
 
 
 Version
-------
+-------
 
-v2.4.5+galaxy2
+- MetFrag tool - v2.4.5+galaxy3
+- MetFrag Vis tool - v2.4.5+galaxy0
 
 (Using `MetFrag v2.4.5 <https://anaconda.org/bioconda/metfrag>`_)
 
@@ -43,6 +44,15 @@ Developers & Contributors
 
 Changes
 -------
+2nd July 2020
+ - NEW TOOL "MetFrag Vis" - 2.4.5+galaxy0 released
+    - Thanks Kristian Peters!
+    - Enhanced visualisation of MetFrag results
+ - Metfrag tool - 2.4.5+galaxy3 released
+    - Option added to include all fragment peaks in output
+    - Additional meta columns added for output (if available) e.g. retention time
+    - Provide adducts at tool level as well as MSP level
+
 Version 2.4.5+galaxy2
  - Change owner to computational-metabolomics 
  - Update tests output based on updates of external compound databases

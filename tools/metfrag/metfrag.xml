@@ -1,4 +1,4 @@
-<tool id="metfrag" name="MetFrag" version="2.4.5+galaxy2" profile="18.01">
+<tool id="metfrag" name="MetFrag" version="2.4.5+galaxy3" profile="18.01">
     <description>
         in silico fragmentor for compound annotation of mass spectrometry fragmentation spectra
     </description>
@@ -51,6 +51,8 @@
             --minMSMSpeaks $minMSMSpeaks
             --schema $schema
 
+            $output_cl
+
             $PreProcessFilter.UnconnectedCompoundFilter
             $PreProcessFilter.IsotopeFilter
 
@@ -61,6 +63,28 @@
             --FilterIncludedElements '$PreProcessFilter.FilterIncludedElements'
             --FilterExcludedElements '$PreProcessFilter.FilterExcludedElements'
             --FilterIncludedExclusiveElements '$PreProcessFilter.FilterIncludedExclusiveElements'
+
+            #if $adducts_cond.adducts_selector == 'select':
+                #for $a in $adducts_cond.adducts
+                    --adducts $a
+                #end for
+            #elif $adducts_cond.adducts_selector == 'all':
+                #if $polarity == 'pos':
+                    --adducts [M+H]+
+                    --adducts [M+NH4]+
+                    --adducts [M+Na]+
+                    --adducts [M+K]+
+                    --adducts [M+CH3OH+H]+
+                    --adducts [M+ACN+H]+
+                    --adducts [M+ACN+Na]+
+                    --adducts [M+2ACN+H]+
+                 #elif $polarity == 'neg':
+                    --adducts [M-H]-
+                    --adducts [M+Cl]-
+                    --adducts [M+HCOO]-
+                    --adducts [M+CH3COO]-
+                 #end if
+            #end if
 
             $skip_invalid_adducts
             --score_thrshld $PostProcessFilter.score_thrshld
@@ -101,6 +125,7 @@
             <option value="pos" selected="true">Positive</option>
             <option value="neg">Negative</option>
         </param>
+
         <param argument="--schema" type="select" label="Schema"
                help="The schema used for the MSP file (auto will try automatically determine the schema)">
             <option value="auto" selected="True">Auto</option>
@@ -110,12 +135,12 @@
         <param argument="--meta_select_col" type="select"
                label="Choose how additional metadata columns are extracted"
                help="The MetFrag output can have additional meta data columns added, these can be either extracted
-               from all MSP parameters or from the 'Name' and 'RECORD_TITLE' MSP parameter. Additionally, columns
+               from the MSP parameters or from the 'Name' and 'RECORD_TITLE' MSP parameter. Additionally, columns
                can be added from the 'Name' or 'RECORD_TITLE' parameter by splitting on | and :
                e.g. 'MZ:100.2 | RT:20 | xcms_grp_id:1' would create MZ,RT and xcms_grp_id columns">
-            <option value="name" selected="true">Extra metadata columns from the Name or RECORD_TITLE</option>
+            <option value="name" >Extra metadata columns from the Name or RECORD_TITLE</option>
             <option value="name_split">Extra metadata columns from the Name or RECORD_TITLE (each column is split on "|" and ":" ) </option>
-            <option value="all">Extra metadata columns from all MSP parameters</option>
+            <option value="all" selected="true">Extra metadata columns from MSP parameters</option>
         </param>
         <conditional name="suspectlist">
             <param name="suspectselector" type="select" label="Suspect list"
@@ -143,12 +168,47 @@
                 <expand macro="metfrag_scoring" suspectlistscore="False" weights="1.0,1.0"/>
             </when>
         </conditional>
-        <param argument="--minMSMSpeaks" type="integer" label="Minimum number of MS/MS peaks" value="0"/>
+
+        <conditional name="adducts_cond">
+            <param name="adducts_selector" type="select" label="How to handle adducts"
+                   help="Choose whether to include a suspect list">
+                <option value="msp" selected="True">Use adducts defined in MSP file</option>
+                <option value="select" >Select from list</option>
+                <option value="all" >Use all available adducts for either pos or neg ionisation mode</option>
+            </param>
+            <when value="msp">
+            </when>
+            <when value="select">
+                <param argument="--adducts" label="Select adducts" type="select" help="" multiple="true" display="checkboxes">
+                    <option value="[M+H]+" selected="True">[M+H]+ 1.007276</option>
+                    <option value="[M+NH4]+">[M+NH4]+ 18.034374</option>
+                    <option value="[M+Na]+">[M+Na]+ 22.989218</option>
+                    <option value="[M+K]+">[M+K]+ 38.963158</option>
+                    <option value="[M+CH3OH+H]+">[M+CH3OH+H]+ 33.033489</option>
+                    <option value="[M+ACN+H]+">[M+ACN+H]+ 42.033823</option>
+                    <option value="[M+ACN+Na]+">[M+ACN+Na]+ 64.015765</option>
+                    <option value="[M+2ACN+H]+">[M+2ACN+H]+ 83.06037</option>
+                    <option value="[M-H]-" >[M-H]- -1.007276</option>
+                    <option value="[M+Cl]-">[M+Cl]- 34.969402</option>
+                    <option value="[M+HCOO]-">[M+HCOO]- 44.99819</option>
+                    <option value="[M+CH3COO]-">[M+CH3COO]- 59.01385</option>
+                </param>
+            </when>
+            <when value="all">
+            </when>
+        </conditional>
+
         <param argument="--skip_invalid_adducts" type="boolean" label="Skip invalid or undefined adduct types?"
                truevalue="--skip_invalid_adducts" falsevalue="" checked="true"
                help="If no adduct type is provided within the MSP file or if the adduct type is not usable
                      with MetFrag, set to 'yes' if these spectra should be skipped or 'no' if the default
                      of [M+H]+ for pos data or [M-H]- for neg data should be used"/>
+
+        <param argument="minMSMSpeaks" type="integer" label="Minimum number of MS/MS peaks" value="0"/>
+        <param argument="--output_cl" type="boolean" checked="true"
+                   truevalue="--output_cl" falsevalue=""
+                   label="Output the MetFrag command line call" help="This will output all the parameters used
+                                                                      for each MetFrag command line call (including the fragment peaks)"/>
         <section name="PreProcessFilter" title="PreProcessing filters" expanded="False">
             <param argument="--UnconnectedCompoundFilter" type="boolean" checked="false"
                    truevalue="--UnconnectedCompoundFilter" falsevalue=""
@@ -213,6 +273,8 @@
             <param name="MetFragDatabaseType" value="PubChem"/>
             <param name="MetFragDatabaseType" value="LocalCSV"/>
             <param name="LocalDatabasePath" value="demo_db.csv"/>
+            <param name="meta_select_col" value="name"/>
+            <param name="output_cl" value="false"/>
             <output name="results" file="metfrag_massbank.tabular"/>
         </test>
         <test>
@@ -224,6 +286,8 @@
             <param name="MetFragDatabaseType" value="LocalCSV"/>
             <param name="LocalDatabasePath" value="demo_db.csv"/>
             <output name="results" file="metfrag_msp.tabular"/>
+            <param name="meta_select_col" value="name"/>
+            <param name="output_cl" value="false"/>
         </test>
         <test>
             <!-- Test PubChem API with "winter" dataset -->
@@ -239,6 +303,8 @@
             <param name="input" value="RP022611.txt"/>
             <param name="MetFragDatabaseType" value="LocalCSV"/>
             <param name="LocalDatabasePath" value="demo_db.csv"/>
+            <param name="meta_select_col" value="name"/>
+            <param name="output_cl" value="false"/>
             <output name="results" file="RP022611.tabular"/>
         </test>
         <test>
@@ -247,7 +313,7 @@
             <param name="schema" value="massbank"/>
             <param name="MetFragDatabaseType" value="LocalCSV"/>
             <param name="LocalDatabasePath" value="demo_db.csv"/>
-            <param name="meta_select_col" value="all"/>
+            <param name="output_cl" value="false"/>
             <output name="results" file="RP022611_all_col.tabular"/>
         </test>
         <test>
@@ -260,13 +326,33 @@
                     <param name="includesuspects_default_bool" value="true"/>
                 </conditional>
             </conditional>
+            <param name="meta_select_col" value="name"/>
+            <param name="output_cl" value="false"/>
             <output name="results" file="RP022611_suspect_default.txt"/>
         </test>
         <test>
             <!-- Test invalid adduct -->
             <param name="input" value="invalid_adduct.msp"/>
             <param name="skip_invalid_adducts" value="true"/>
+            <param name="meta_select_col" value="name"/>
+            <param name="output_cl" value="false"/>
             <output name="results" file="invalid_adduct_result.txt" ftype="tabular"/>
+        </test>
+        <test>
+            <!-- Test all adducts-->
+            <param name="input" value="RP022611.txt"/>
+            <param name="schema" value="massbank"/>
+            <param name="polarity" value="neg"/>
+            <param name="skip_invalid_adducts" value="false"/>
+            <param name="MetFragDatabaseType" value="PubChem"/>
+            <param name="MetFragDatabaseType" value="LocalCSV"/>
+            <param name="LocalDatabasePath" value="demo_db.csv"/>
+            <param name="meta_select_col" value="name"/>
+            <param name="output_cl" value="false"/>
+            <output name="results" file="RP022611_all_adducts.tabular"/>
+            <conditional name="adducts_cond">
+                <param name="adducts_selector" value="all"/>
+            </conditional>
         </test>
     </tests>
     <help>
